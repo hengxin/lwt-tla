@@ -13,12 +13,40 @@ Same(S) ==
   (*************************************************************************)
   (* If S is not empty, then this define Same(S) to be the                 *)
   (* if or not the element of S is same.                                   *)
+  (* It is designed for determine whether the results of Read are the same *)
   (*************************************************************************)
   /\ S # {}
   /\  \E n \in S: \A m \in S : n = m          
-            
 
-CONSTANTS Value, Acceptor, Quorum, Data, ReadData
+
+CONSTANTS Value, Acceptor, Quorum, Data, ReadData, Precondition
+
+ExistCondition(rd) ==
+  (*************************************************************************)
+  (* If the exist or not exist condition is satisfied,then TRUE            *)                                
+  (*************************************************************************) 
+  IF Precondition.type="exist" THEN rd \in Data
+                               ELSE rd \notin Data
+MeetCondition(val) ==
+  (*************************************************************************)
+  (* If condition is satisfied,then TRUE                                *)                                
+  (*************************************************************************)
+  CASE  Precondition.operator=">" -> val  >  Precondition.value
+     [] Precondition.operator="<" -> val  <  Precondition.value
+     [] Precondition.operator="=" -> val  =  Precondition.value
+     [] Precondition.operator=">=" -> val >= Precondition.value
+     [] Precondition.operator="<=" -> val <= Precondition.value
+     [] Precondition.operator="/=" -> val /= Precondition.value
+     [] OTHER -> FALSE 
+     
+Compare(rd,val) == 
+  (*************************************************************************)
+  (* If precondition is satisfied,then TRUE                                *)                                
+  (*************************************************************************)
+  IF ExistCondition(rd) THEN MeetCondition(val)
+                        ELSE FALSE
+
+
 ASSUME  /\ \A Q \in Quorum : Q \subseteq Acceptor
         /\ \A Q1, Q2 \in Quorum : Q1 \cap Q2 /= {}
         /\ \A RD \in ReadData : RD \in Data
@@ -60,7 +88,7 @@ Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxComBal = [a \in Acceptor |-> -1]
         /\ maxComVal  = [a \in Acceptor |-> None]
         /\ msgs = {}
-        /\ dataResult  = [a \in Acceptor |->[data \in Data |-> [result |-> 0, 
+        /\ dataResult = [a \in Acceptor |->[data \in Data |-> [result |-> 0, 
                                                                 version  |-> 0]]]
         
 Send(m) == msgs' = msgs \cup {m}
@@ -81,24 +109,21 @@ Promise(a) ==
   /\ UNCHANGED <<maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
 
   
-Propose(b,v) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
-                /\ \E Q \in Quorum :
-                    LET Qmset == {m \in msgs : /\ m.type = "Promise"
-                                               /\ m.acc \in Q
-                                               /\ m.bal = b}
-                        maxAbal == Maximum({m.maxAccBal : m \in Qmset})
-                        maxCbal == Maximum({m.maxComBal : m \in Qmset})
-                        \*如果存在未完成的提交，先propose未提交的值；如果可以提出自己的值，就需要read得到这个值
-                        val == IF maxAbal > maxCbal 
-                                THEN (CHOOSE m \in Qmset : m.maxAccBal = maxAbal).maxAccVal
-                                ELSE v
-                        \*这里应该有问题，我怎么得到需要去read的值？或者说我怎么选出我需要读取的值
-                        rData== CHOOSE rd \in ReadData :TRUE
-                    IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a              
-                        (****Read的data还不知道该怎么处理***)
-                        /\ IF val=v  THEN Send([type |-> "Read", bal |-> b, data |-> rData])
-                                     ELSE Send([type |-> "Propose",bal |-> b, val |-> val])
-                /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
+Propose(b,v,rd) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
+                   /\ \E Q \in Quorum :
+                       LET Qmset == {m \in msgs : /\ m.type = "Promise"
+                                                  /\ m.acc \in Q
+                                                  /\ m.bal = b}
+                           maxAbal == Maximum({m.maxAccBal : m \in Qmset})
+                           maxCbal == Maximum({m.maxComBal : m \in Qmset})
+                           (**如果存在未完成的提交，先propose未提交的值；如果可以提出自己的值，就需要read得到这个值**)
+                           val == IF maxAbal > maxCbal 
+                                   THEN (CHOOSE m \in Qmset : m.maxAccBal = maxAbal).maxAccVal
+                                   ELSE v
+                       IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a              
+                           /\ IF val=v  THEN Send([type |-> "Read", bal |-> b, data |-> rd])
+                                        ELSE Send([type |-> "Propose",bal |-> b, val |-> val])
+                   /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
             
             
 Read(a) == /\ \E m \in msgs : /\ m.type = "Read" 
@@ -108,20 +133,21 @@ Read(a) == /\ \E m \in msgs : /\ m.type = "Read"
              /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal,
                             dataResult>>
                           
-Result(b) == /\ \E Q \in Quorum : 
-                 LET QRmset == {m \in msgs : /\ m.type = "Result"
-                                             /\ m.acc \in Q
-                                             /\ m.bal = b }
-                     QResult == {m.result : m \in QRmset}
-                     \*如果读取到的结果不一致，需要开启修复，否则判断是否满足前置条件
-                     res == IF Same(QResult) THEN CHOOSE n \in QResult : \A m \in QResult : n=m
-                                             ELSE -1
-                     ver == Maximum({m.version : m \in QRmset})
-                     res2 == (CHOOSE m \in QRmset : m.version=ver).result
-                 IN  /\ \A a \in Q : \E m \in QRmset : m.acc = a 
-                     /\ IF res=-1 THEN Send([type |-> "Repair", result |-> res2, version |-> ver ])
-                                  ELSE IF res \in Data THEN Send([type |-> "Propose", bal |-> b, val |-> res])
-                                                       ELSE FALSE
+Result(b,v,rd) == /\ \E Q \in Quorum : 
+                    LET QRmset == {m \in msgs : /\ m.type = "Result"
+                                                /\ m.acc \in Q
+                                                /\ m.bal = b }
+                        QResult == {m.result : m \in QRmset}
+                        res == IF Same(QResult) THEN CHOOSE n \in QResult : \A m \in QResult : n=m
+                                                ELSE -1
+                        ver == Maximum({m.version : m \in QRmset})
+                        res2 == (CHOOSE m \in QRmset : m.version=ver).result
+                    IN  /\ \A a \in Q : \E m \in QRmset : m.acc = a 
+                        /\ IF res=-1 THEN Send([type |-> "Repair", result |-> res2, version |-> ver ])
+                                     ELSE IF Compare(rd,res) THEN Send([type |-> "Propose", bal |-> b, val |-> v])
+                                                             ELSE FALSE
+                  /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
+                                          
                                                        
 Repair(a) == /\ \E m \in msgs: /\ m.type="Repair"
                                /\ dataResult' = [dataResult EXCEPT ![a][m.data] = [result |-> m.result, version |-> m.version]]
@@ -161,9 +187,8 @@ Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
 
 
 Next == \/ \E b \in Ballot : \/ Prepare(b) 
-                             \/ \E v \in Value : Propose(b,v) \/ Commit(b,v)
-                             \/ Result(b)
-                        
+                             \/ \E v \in Value :  \/ Commit(b,v)
+                                                  \/ \E rd \in ReadData : Propose(b,v,rd) \/ Result(b,v,rd)
         \/ \E a \in Acceptor : \/ Promise(a) 
                                \/ Accept(a) 
                                \/ Ack(a)
