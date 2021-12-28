@@ -68,6 +68,7 @@ Message ==
   \cup [type : {"Accept"}, acc : Acceptor, bal : Ballot, val : Value]
   \cup [type : {"Commit"}, bal: Ballot, val: Value]
   \cup [type : {"Ack"}, acc : Acceptor, bal : Ballot,val : Value]
+  \cup [type : {"Terminate"}, bal : Ballot]
 
 VARIABLES maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, msgs, dataResult  
 vars == <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, msgs, dataResult>>
@@ -89,7 +90,7 @@ Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxComVal  = [a \in Acceptor |-> None]
         /\ msgs = {}
         /\ dataResult = [a \in Acceptor |->[data \in Data |-> [result |-> 0, 
-                                                                version  |-> 0]]]
+                                                               version  |-> 0]]]
         
 Send(m) == msgs' = msgs \cup {m}
 
@@ -116,7 +117,8 @@ Propose(b,v,rd) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
                                                   /\ m.bal = b}
                            maxAbal == Maximum({m.maxAccBal : m \in Qmset})
                            maxCbal == Maximum({m.maxComBal : m \in Qmset})
-                           (**如果存在未完成的提交，先propose未提交的值；如果可以提出自己的值，就需要read得到这个值**)
+                           (**If there is an uncommitted submission, propose the uncommitted value first**)
+                           (**If you can propose your own value, you need to read to get this value**)
                            val == IF maxAbal > maxCbal 
                                    THEN (CHOOSE m \in Qmset : m.maxAccBal = maxAbal).maxAccVal
                                    ELSE v
@@ -143,14 +145,18 @@ Result(b,v,rd) == /\ \E Q \in Quorum :
                         ver == Maximum({m.version : m \in QRmset})
                         res2 == (CHOOSE m \in QRmset : m.version=ver).result
                     IN  /\ \A a \in Q : \E m \in QRmset : m.acc = a 
-                        /\ IF res=-1 THEN Send([type |-> "Repair", result |-> res2, version |-> ver ])
-                                     ELSE IF Compare(rd,res) THEN Send([type |-> "Propose", bal |-> b, val |-> v])
-                                                             ELSE FALSE
+                        /\ IF res=-1 THEN Send([type |-> "Repair", result |-> res2, version |-> ver, data |-> rd ])
+                                     ELSE (IF Compare(rd,res) THEN Send([type |-> "Propose", bal |-> b, val |-> v])
+                                                              ELSE Send([type |-> "Terminate", val |->b])
+                                          )
+                                                             
                   /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
                                           
-                                                       
+
+                                                      
 Repair(a) == /\ \E m \in msgs: /\ m.type="Repair"
-                               /\ dataResult' = [dataResult EXCEPT ![a][m.data] = [result |-> m.result, version |-> m.version]]
+                               /\ dataResult' = [dataResult EXCEPT ![a][m.data] =
+                                                   [result |-> m.result, version |-> m.version]]
              /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, msgs>>
 
          
@@ -165,30 +171,32 @@ Accept(a) == /\ \E m \in msgs: /\ m.type="Propose"
              /\ UNCHANGED<<maxComBal, maxComVal, dataResult>>    
 
              
-Commit(b,v) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
-               /\ \E Q \in Quorum :
-                   LET QAmset == {m \in msgs : /\ m.type="Accept"
-                                               /\ m.acc \in Q
-                                               /\ m.bal=b}
-                   IN /\ \A a \in Q : \E m \in QAmset : m.acc = a
-               /\ Send([type |-> "Commit", bal |-> b, val |-> v])
-               /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, 
-                             maxComVal, dataResult>>
+Commit(b,v,rd) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
+                  /\ \E Q \in Quorum :
+                      LET QAmset == {m \in msgs : /\ m.type="Accept"
+                                                  /\ m.acc \in Q
+                                                  /\ m.bal=b}
+                      IN /\ \A a \in Q : \E m \in QAmset : m.acc = a
+                  /\ Send([type |-> "Commit", bal |-> b, val |-> v, data |-> rd])
+                  /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, 
+                                maxComVal, dataResult>>
                
 Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
                             /\ maxBal[a] \leq m.bal
                             /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
                             /\ maxComBal' = [maxComBal EXCEPT ![a] = m.bal]
                             /\ maxComVal' = [maxComVal EXCEPT ![a] = m.val]
+                            /\ dataResult' = [dataResult EXCEPT ![a][m.data]=[result|-> m.val, version |->(@.version+1)] ]
                             /\ Send([type |-> "Ack", bal |-> m.bal, val |-> m.val, 
                                     acc |->a])
-          /\ UNCHANGED<<maxAccBal, maxAccVal, dataResult>>
+          /\ UNCHANGED<<maxAccBal, maxAccVal>>
           
 
 
 Next == \/ \E b \in Ballot : \/ Prepare(b) 
-                             \/ \E v \in Value :  \/ Commit(b,v)
-                                                  \/ \E rd \in ReadData : Propose(b,v,rd) \/ Result(b,v,rd)
+                             \/ \E v \in Value : \/ \E rd \in ReadData : \/ Propose(b,v,rd) 
+                                                                         \/ Result(b,v,rd)
+                                                                         \/ Commit(b,v,rd)
         \/ \E a \in Acceptor : \/ Promise(a) 
                                \/ Accept(a) 
                                \/ Ack(a)
@@ -198,5 +206,5 @@ Next == \/ \E b \in Ballot : \/ Prepare(b)
 Spec == Init /\ [][Next]_vars
 =============================================================================
 \* Modification History
-\* Last modified Wed Dec 15 15:07:23 CST 2021 by LENOVO
+\* Last modified Tue Dec 28 11:39:38 CST 2021 by LENOVO
 \* Created Thu Dec 08 10:19:29 CST 2021 by LENOVO
