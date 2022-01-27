@@ -107,7 +107,11 @@ Propose(b,v) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
                         value == IF maxAccbal > maxCombal 
                                      THEN (CHOOSE m \in Qmset : m.maxAccBal = maxAccbal).maxAccVal
                                      ELSE v
-                    IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a              
+                        Qmsetv == {m \in Qmset : m.maxAccBal >= 0}
+                    IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a
+                        /\ \/ Qmsetv = {}
+                           \/ \E m \in Qmsetv : /\ m.maxAccVal = v
+                                                /\ \A mm \in Qmsetv : m.maxAccBal >= mm.maxAccBal            
                         /\ IF value=v  THEN Send([type |-> "Read", bal |-> b])
                                        ELSE Send([type |-> "Propose", bal |-> b, val |-> v])
                 /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult>>
@@ -169,14 +173,14 @@ Commit(b,v) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
 Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
                             /\ maxBal[a] \leq m.bal
                             /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
-                            /\ maxAccBal' = [maxAccBal EXCEPT ![a] = m.bal]
-                            /\ maxAccVal' = [maxAccVal EXCEPT ![a] = m.val]
                             /\ maxComBal' = [maxComBal EXCEPT ![a] = m.bal]
                             /\ maxComVal' = [maxComVal EXCEPT ![a] = m.val]
+                            /\ dataResult' = [dataResult EXCEPT ![a]=
+                                [result|-> m.val, version |->(@.version+1)] ]
                             /\ Send([type |-> "Ack", bal |-> m.bal, val |-> m.val, 
                                     acc |->a])
-          /\UNCHANGED<<dataResult>>
-          
+          \*/\UNCHANGED<<maxAccBal, maxAccVal, dataResult>>
+          /\UNCHANGED<<maxAccBal, maxAccVal>>
 
 
 Next == \/ \E b \in Ballot : \/ Prepare(b) 
@@ -202,7 +206,6 @@ Inv ==
  /\ TypeOK
  /\ \A a \in Acceptor: /\ maxBal[a] >= maxAccBal[a]
                        /\ maxBal[a] >= maxComBal[a]
-                       /\ maxAccBal[a] >= maxComBal[a]
  /\ \A a \in Acceptor : IF maxComBal[a] = -1
                           THEN maxComVal[a] = None
                           ELSE <<maxComBal[a], maxComVal[a]>> \in votes[a]
