@@ -1,5 +1,5 @@
 --------------------------- MODULE CassandraPaxos ---------------------------
-EXTENDS Integers
+EXTENDS Integers, Sequences, FiniteSets
 
 Maximum(S) == 
   (*************************************************************************)
@@ -152,13 +152,15 @@ Repair(a) == /\ \E m \in msgs: /\ m.type="Repair"
          
 
 Accept(a) == /\ \E m \in msgs: /\ m.type="Propose"
-                               /\ maxBal[a] \leq m.bal
-                               /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
+                               /\ maxBal[a] = m.bal
+                               \*/\ maxBal[a] \leq m.bal
+                               \*/\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
                                /\ maxAccBal' = [maxAccBal EXCEPT ![a] = m.bal]
                                /\ maxAccVal' = [maxAccVal EXCEPT ![a] = m.val]
                                /\ Send([type |-> "Accept", bal |-> m.bal,
                                        val |-> m.val, acc |->a])
-             /\ UNCHANGED<<maxComBal, maxComVal, dataResult, balValue>>    
+             \*/\ UNCHANGED<<maxComBal, maxComVal, dataResult, balValue>>   
+             /\ UNCHANGED<<maxBal, maxComBal, maxComVal, dataResult, balValue>>  
 
              
 Commit(b) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
@@ -173,8 +175,9 @@ Commit(b) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
                             maxComVal, dataResult, balValue>>
                
 Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
-                            /\ maxBal[a] \leq m.bal
-                            /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
+                            \*/\ maxBal[a] \leq m.bal
+                            \*/\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
+                            /\ maxBal[a] = m.bal
                             /\ maxComBal' = [maxComBal EXCEPT ![a] = m.bal]
                             /\ maxComVal' = [maxComVal EXCEPT ![a] = m.val]
                             \*/\ dataResult' = [dataResult EXCEPT ![a]=
@@ -182,7 +185,8 @@ Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
                             /\ Send([type |-> "Ack", bal |-> m.bal, 
                                     val |-> m.val, acc |->a])
           \*/\UNCHANGED <<maxAccBal, maxAccVal, balValue>>
-          /\UNCHANGED <<maxAccBal, maxAccVal, dataResult, balValue>>
+          \*/\UNCHANGED <<maxAccBal, maxAccVal, dataResult, balValue>> 
+          /\UNCHANGED <<maxBal, maxAccBal, maxAccVal, dataResult, balValue>>
                     
 Next == \/ \E ev, sv \in Value, b \in Ballot : CAS(ev,sv,b)
         \/ \E b \in Ballot : \/ Propose(b)
@@ -191,26 +195,12 @@ Next == \/ \E ev, sv \in Value, b \in Ballot : CAS(ev,sv,b)
         \/ \E a \in Acceptor : \/ Promise(a)
                                \/ Accept(a)
                                \/ Ack(a)
-                               \/ Read(a)                         
+                               \/ Read(a)
+                               \* \/ Repair(a)                         
               
 Spec == Init /\ [][Next]_vars
-
-votes == 
-  [a \in Acceptor |->  
-      {<<m.bal, m.val>> : m \in {mm \in msgs: /\ mm.type = "Ack"
-                                              /\ mm.acc = a }}]
-                                              
-V == INSTANCE Voting
-
-Inv == 
- /\ TypeOK
- /\ \A a \in Acceptor: /\ maxBal[a] >= maxAccBal[a]
-                       /\ maxBal[a] >= maxComBal[a]
- /\ \A a \in Acceptor : IF maxComBal[a] = -1
-                          THEN maxComVal[a] = None
-                          ELSE <<maxComBal[a], maxComVal[a]>> \in votes[a]
                                                          
 =============================================================================
 \* Modification History
-\* Last modified Fri Feb 25 18:54:47 CST 2022 by LENOVO
+\* Last modified Thu Mar 03 17:37:19 CST 2022 by LENOVO
 \* Created Thu Dec 08 10:19:29 CST 2021 by LENOVO
