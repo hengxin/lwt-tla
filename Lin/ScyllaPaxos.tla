@@ -1,5 +1,5 @@
---------------------------- MODULE CassandraPaxos ---------------------------
-EXTENDS Integers, Sequences, FiniteSets
+------------------------------- MODULE ScyllaPaxos -------------------------------
+EXTENDS Integers, Sequences, FiniteSets, TLC
 
 Maximum(S) == 
   (*************************************************************************)
@@ -40,42 +40,44 @@ Message ==
        [type : {"Prepare"}, bal : Ballot]
   \cup [type : {"Promise"}, acc : Acceptor, bal : Ballot, 
         maxAccBal : Ballot \cup {-1}, maxAccVal : Value \cup {None},
-        maxComBal : Ballot \cup {-1}, maxComVal : Value \cup {None}]
-  \cup [type : {"Read"}, bal : Ballot]
-  \cup [type : {"Result"}, bal : Ballot, acc : Acceptor,
-                value : Value \cup {None}, version: Version ]
+        maxComBal : Ballot \cup {-1}, maxComVal : Value \cup {None},
+        value : Value, version : Version]
   \cup [type : {"Repair"}, value : Value \cup {None}, version: Version]
   \cup [type : {"Propose"}, bal : Ballot, val : Value]
   \cup [type : {"Accept"}, acc : Acceptor, bal : Ballot, val : Value]
-  \cup [type : {"Commit"}, bal: Ballot, val: Value]
+  \cup [type : {"Learn"}, bal: Ballot, val: Value]
   \cup [type : {"Ack"}, acc : Acceptor, bal : Ballot,val : Value]
   \cup [type : {"Terminate"}, bal : Ballot]
+  
+Events == [type : {"invoke", "response"}, bal : Ballot, expVal : Value,
+           setVal : Value, flag : {"TRUE","FALSE"} ]
 
 VARIABLES maxBal, maxAccBal, maxAccVal, maxComBal, 
-          maxComVal, msgs, dataResult, balValue, history 
+          maxComVal, msgs, balValue, history,dataResult  
 vars == <<maxBal, maxAccBal, maxAccVal, maxComBal, 
-          maxComVal, msgs, dataResult, balValue, history>>
+          maxComVal, msgs, balValue, history,dataResult>>
 
 TypeOK == /\ maxBal \in [Acceptor -> Ballot \cup {-1}]
           /\ maxAccBal \in [Acceptor -> Ballot \cup {-1}]
-          /\ maxAccVal \in [Acceptor -> Value \cup {None}]
+          /\ maxAccVal \in [Acceptor -> Value ]
           /\ maxComBal \in [Acceptor -> Ballot \cup {-1}]
-          /\ maxComVal \in [Acceptor -> Value \cup {None}]
-          /\ dataResult \in [Acceptor -> [value : Value \cup {None}, 
-                                           version : Version]]
+          /\ maxComVal \in [Acceptor -> Value ]
           /\ msgs \subseteq Message 
-          /\ balValue \in [Ballot -> [expVal : Value \cup {None},
-                                      setVal : Value \cup {None}]]               
+          /\ balValue \in [Ballot -> [expVal : Value,
+                                      setVal : Value]]  
+          \*/\ history \in Seq(Events) 
+          /\ dataResult \in [Acceptor -> [value : Value, 
+                                         version : Version]]            
           
 Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxAccBal = [a \in Acceptor |-> -1]
         /\ maxAccVal  = [a \in Acceptor |-> InitVal]
         /\ maxComBal = [a \in Acceptor |-> -1]
         /\ maxComVal  = [a \in Acceptor |-> InitVal]
-        /\ dataResult = [a \in Acceptor |-> [value |-> InitVal, version  |-> 1]]
         /\ msgs = {}
         /\ balValue = [b \in Ballot |->[expVal |-> InitVal, setVal |-> InitVal]]
         /\ history = <<>>
+        /\ dataResult = [a \in Acceptor |-> [value |-> InitVal, version  |-> 1]]
         
 Send(m) == msgs' = msgs \cup {m}
  
@@ -83,11 +85,12 @@ CAS(ev,sv,b) ==  /\ ~ \E m \in msgs: m.type = "Prepare" /\ m.bal = b
                  /\ Send([type |-> "Prepare", bal |-> b])
                  /\ balValue' = [balValue EXCEPT ![b]=
                                  [expVal |-> ev, setVal |-> sv]]
-                 /\ history' = Append(history, [type |-> "invoke", bal |->b,
-                               expVal |->ev,setVal |-> sv,flag |->"TRUE"])
+                 /\ history' = Append(history,[type |-> "invoke", bal |-> b,
+                             expVal |-> ev, setVal |-> sv, flag |-> "TURE"])
                  /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, 
-                           maxComVal, dataResult>>        
-                           
+                           maxComVal,dataResult>>        
+
+\* Promise Message add ReadResult(value,version)                           
 Promise(a) == 
   /\ \E m \in msgs : 
         /\ m.type = "Prepare"
@@ -95,11 +98,11 @@ Promise(a) ==
         /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
         /\ Send([type |-> "Promise", acc |-> a, bal |-> m.bal, 
                   maxAccBal |-> maxAccBal[a], maxAccVal |-> maxAccVal[a],
-                  maxComBal |-> maxComBal[a], maxComVal |-> maxComVal[a]
-                ])
-        
+                  maxComBal |-> maxComBal[a], maxComVal |-> maxComVal[a],
+                  value |->dataResult[a].value, 
+                  version |->dataResult[a].version])
   /\ UNCHANGED <<maxAccBal, maxAccVal, maxComBal, maxComVal, 
-                dataResult, balValue,history>>
+                 balValue, history,dataResult>>
 
   
 Propose(b) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
@@ -109,44 +112,27 @@ Propose(b) == /\ ~ \E m \in msgs: m.type = "Propose" /\ m.bal = b
                                              /\ m.bal = b}
                       maxAccbal == Maximum({m.maxAccBal : m \in Qmset})
                       maxCombal == Maximum({m.maxComBal : m \in Qmset})
-                      preValue == (CHOOSE m \in Qmset : m.maxAccBal = maxAccbal).maxAccVal
-                  IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a   
+                      preValue == (CHOOSE m \in Qmset : m.maxAccBal=maxAccbal).maxAccVal
+                      QResult == {m.value : m \in Qmset}
+                      maxVersion == Maximum({m.version : m \in Qmset})
+                      maxValue == (CHOOSE m \in Qmset : m.version=maxVersion).value
+                  IN  /\ \A a \in Q : \E m \in Qmset : m.acc = a 
                       /\ IF maxAccbal > maxCombal  
-                              THEN /\ Send([type |-> "Propose",bal |-> b, val |-> preValue])
-                                   /\ balValue' = [balValue EXCEPT ![b]= 
-                                                      [expVal |-> balValue[maxAccbal].expVal, 
-                                                       setVal |-> preValue]]
-                              ELSE /\ Send([type |-> "Read", bal |-> b])
-                                   /\ balValue' = balValue
-              /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal,dataResult, history>>
-            
-            
-Read(a) == /\ \E m \in msgs : /\ m.type = "Read" 
-                              /\ Send([type |-> "Result", acc |-> a, bal |->m.bal,
-                                       value |-> dataResult[a].value, 
-                                       version |-> dataResult[a].version])
-           /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal,
-                            dataResult, balValue, history>>
-                          
-Result(b) == /\ \E Q \in Quorum : 
-                LET QRmset == {m \in msgs : /\ m.type = "Result"
-                                            /\ m.acc \in Q
-                                            /\ m.bal = b }
-                    QResult == {m.value : m \in QRmset}
-                    maxVersion == Maximum({m.version : m \in QRmset}) 
-                    maxValue == (CHOOSE m \in QRmset : m.version=maxVersion).value 
-                IN  /\ \A a \in Q : \E m \in QRmset : m.acc = a 
-                    /\ IF MeetCondition(balValue[b].expVal,maxValue) 
-                            THEN Send([type |-> "Propose", bal |-> b, 
-                                      val |-> balValue[b].setVal])
-                            ELSE Send([type |-> "Terminate", bal |->b])
-                      
-                      \*/\ IF ~Same(QResult) THEN Send([type |-> "Repair", 
-                      \*                               value |-> maxValue, 
+                            THEN  /\ Send([type |-> "Propose", bal |-> b, val |-> preValue])
+                                  /\ balValue'=[balValue EXCEPT ![b]= [expVal |-> balValue[maxAccbal].expVal, 
+                                      setVal |-> preValue]]
+                            ELSE  /\IF balValue[b].expVal = maxValue
+                                      THEN   Send([type |-> "Propose", bal |-> b,
+                                                 val |-> balValue[b].setVal])
+                                      ELSE   Send([type |-> "Terminate", bal |-> b])
+                                  /\ balValue' = balValue
+                      \*/\ IF ~Same(QResult) THEN Send([type |-> "Repair",
+                      \*                               value |-> maxValue,
                       \*                               version |-> maxVersion])
-                  /\ UNCHANGED<<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, 
-                                dataResult, balValue,history>>                
+                      /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, 
+                                     history,dataResult>>
 
+                             
 (************************************************************************************                                                     
 Repair(a) == /\ \E m \in msgs: /\ m.type="Repair"
                                /\ dataResult' = [dataResult EXCEPT ![a] =
@@ -166,30 +152,27 @@ Accept(a) == /\ \E m \in msgs: /\ m.type="Propose"
                                        val |-> m.val, acc |->a])
              /\ UNCHANGED<<maxComBal, maxComVal, dataResult, balValue, history>>   
              
-             
-Commit(b) == /\ ~\E m \in msgs : m.type = "Commit" /\ m.bal = b
-             /\ \E Q \in Quorum :
-                 LET QAmset == {m \in msgs : /\ m.type="Accept"
-                                             /\ m.acc \in Q
-                                             /\ m.bal=b}
-                 IN /\ \A a \in Q : \E m \in QAmset : m.acc = a
-             /\ Send([type |-> "Commit", bal |-> b, 
-                     val |-> balValue[b].setVal])
-             /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, 
-                            maxComVal, dataResult, balValue,history>>
+Learn(b) == /\ ~\E m \in msgs : m.type = "Learn" /\ m.bal = b
+            /\ \E Q \in Quorum :
+                LET QAmset == {m \in msgs : /\ m.type="Accept"
+                                            /\ m.acc \in Q
+                                            /\ m.bal=b}
+                IN /\ \A a \in Q : \E m \in QAmset : m.acc = a
+            /\ Send([type |-> "Learn", bal |-> b, val |-> balValue[b].setVal])
+            /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, 
+                           maxComVal, balValue, history,dataResult>>
                
-Ack(a) == /\ \E m \in msgs: /\ m.type="Commit"
+Ack(a) == /\ \E m \in msgs: /\ m.type="Learn"
                             /\ maxBal[a] \leq m.bal
                             /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
-                            /\ maxBal[a] = m.bal
                             /\ maxComBal' = [maxComBal EXCEPT ![a] = m.bal]
                             /\ maxComVal' = [maxComVal EXCEPT ![a] = m.val]
                             /\ dataResult' = [dataResult EXCEPT ![a]=
-                               [value |-> m.val, version |->(@.version+1)]]
+                                [value |-> m.val, version |->(@.version+1)]]
                             /\ Send([type |-> "Ack", bal |-> m.bal, 
                                     val |-> m.val, acc |->a])
-          /\UNCHANGED <<maxAccBal, maxAccVal, balValue, history>>
-
+          /\ UNCHANGED <<maxAccBal, maxAccVal, balValue, history>>
+          
 SelectMessages(type, b) == {m \in msgs : m.type = type /\ m.bal = b}
       
 Acked(b) == /\ {m.acc : m \in SelectMessages("Ack",b) } \in Quorum
@@ -200,22 +183,19 @@ Acked(b) == /\ {m.acc : m \in SelectMessages("Ack",b) } \in Quorum
                                           setVal |-> balValue[b].setVal,
                                           flag |->"TRUE"])
             /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal,
-                           balValue, msgs,dataResult>>         
+                           balValue, msgs,dataResult>>
                     
 Next == \/ \E ev, sv \in Value, b \in Ballot : CAS(ev,sv,b)
         \/ \E b \in Ballot : \/ Propose(b)
-                             \/ Result(b)
-                             \/ Commit(b)
+                             \/ Learn(b)
+                             \/ Acked(b)
         \/ \E a \in Acceptor : \/ Promise(a)
                                \/ Accept(a)
                                \/ Ack(a)
-                               \/ Read(a)
                                \* \/ Repair(a)                         
               
 Spec == Init /\ [][Next]_vars
-
-
-
+-----------------------------------------------------------------------------
 FiniteSeq(S) == UNION {[1..n -> S] : n \in 1..Cardinality(S)}
 SeqAsSet(S) == {S[i] : i \in DOMAIN S}
 IsResponse(r) == r.type = "response"
@@ -248,8 +228,8 @@ HistoryIsLinearizable == \E order \in {<<>>} \union FiniteSeq(Ballot) :
 
 Inv == /\ TypeOK
        /\ HistoryIsLinearizable
-
+       
 =============================================================================
 \* Modification History
-\* Last modified Fri Feb 25 18:54:47 CST 2022 by LENOVO
-\* Created Thu Dec 08 10:19:29 CST 2021 by LENOVO
+\* Last modified Fri Mar 11 12:51:16 CST 2022 by LENOVO
+\* Created Sun Feb 27 08:57:09 CST 2022 by LENOVO
