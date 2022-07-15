@@ -1,0 +1,21 @@
+\begin{table}[h]
+  \caption{Cassandra满足线性一致性的验证结果}
+  \label{tbl:tlc-Cassandra}
+  \resizebox{\textwidth}{!}{%
+    \centering
+    \renewcommand*{\arraystretch}{1.1}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{\incell{TLC模型}{(参与者数量, 提议值个数,投票轮数)}} & \textbf{状态图直径} & \textbf{状态数} & \textbf{不同状态数} 
+    & \textbf{\incell{检验时间}{$(hh:mm:ss)$}} \\ \hline
+    \hline
+    $(3, 2, 2)$     & $26$       & $711073087$        & $100000003$        & $0:26:38$   \\ \hline
+    $(3, 3, 2)$     & $26$       & $692790858$        & $100000013$        & $0:27:58$    \\ \hline
+    $(3, 2, 3)$     & $22$       & $614226085$        & $100000015$        & $0:27:26$    \\ \hline
+    $(3, 3, 3)$     & $21$       & $700452998$        & $100000009$        & $0:27:26$    \\ \hline
+    $(4, 2, 2)$     & $28$       & $842260545$        & $100000008$        & $0:26:37$    \\ \hline
+    $(4, 3, 2)$     & $28$       & $816620642$        & $100000009$        & $0:28:14$    \\ \hline
+    $(4, 2, 3)$     & $24$       & $757209111$        & $100000008$        & $0:26:45$    \\ \hline
+    \end{tabular}%
+  }
+\end{table}
