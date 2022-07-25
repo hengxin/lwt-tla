@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CASPaxos</name>
+	<name>CassandraPaxos</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -10,20 +10,15 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>toolbox.builder.PCalAlgorithmSearchingBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>toolbox.natures.TLANature</nature>
 	</natures>
 	<linkedResources>
 		<link>
-			<name>CASPaxos.tla</name>
+			<name>CassandraPaxos.tla</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/CASPaxos.tla</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/CassandraPaxos.tla</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

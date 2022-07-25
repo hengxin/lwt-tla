@@ -1,49 +1,24 @@
 -------------------------------- MODULE CASPaxos -------------------------------
-(***************************************************************************)
-(* This is a high-level specification of the Paxos consensus algorithm.    *)
-(* It refines the spec in module Voting, which you should read before      *)
-(* reading this module.  In the Paxos consensus algorithm, acceptors       *)
-(* communicate by sending messages.  There are additional processes called *)
-(* leaders.  The specification here essentially considers there to be a    *)
-(* separate leader for each ballot number.  We can consider "leader" to be *)
-(* a role, where in an implementation there will be a finite number of     *)
-(* leader processes each of which plays infinitely many of these leader    *)
-(* roles.                                                                  *)
-(*                                                                         *)
-(* Note: The algorithm described here is the Paxos consensus algorithm.    *)
-(* It is the crucial component of the Paxos algorithm, which implements a  *)
-(* fault-tolerant state machine using a sequence of instances of the       *)
-(* consensus algorithm.  The Paxos algorithm is sometimes called           *)
-(* MultiPaxos, with the Paxos consensus algorithm being incorrectly called *)
-(* the Paxos algorithm.  I'm afraid I have contributed to this confusion   *)
-(* by being lazy and calling the module "Paxos" instead of                 *)
-(* "PaxosConsensus".  But incarnations of this module have already         *)
-(* appeared, so I'm reluctant to change its name now.                      *)
-(***************************************************************************)
+(*
+This is a high-level specification of the CASPaxos algorithm
+from the paper "" by.
 
+TODO: It refines the spec in module Voting.                             
+*)
+-----------------------------------------------------------------------------
 EXTENDS Integers
+-----------------------------------------------------------------------------
+CONSTANTS
+    Value,      \* the set of values to be proposed and chosen from
+    Acceptor,   \* the set acceptors
+    Quorum      \* the quorum system on acceptors
 
-(***************************************************************************)
-(* The constants and the assumptions about them are the same as for the    *)
-(* Voting algorithm.  However, the second conjunct of the assumption,      *)
-(* which asserts that any two quorums have a non-empty intersection, is    *)
-(* not needed for the Paxos consensus algorithm to implement the Voting    *)
-(* algorithm.  The Voting algorithm, and it, do not satisfy consensus      *)
-(* without that assumption.                                                *)
-(***************************************************************************)
-CONSTANTS Value, Acceptor, Quorum
+None == CHOOSE v : v \notin Value 
 
 ASSUME  /\ \A Q \in Quorum : Q \subseteq Acceptor
-        /\ \A Q1, Q2 \in Quorum : Q1 \cap Q2 /= {}
+        /\ \A Q1, Q2 \in Quorum : Q1 \cap Q2 # {}
       
 Ballot ==  Nat
-
-None == CHOOSE v : v \notin Ballot
-  (*************************************************************************)
-  (* This defines None to be an unspecified value that is not a ballot     *)
-  (* number.                                                               *)
-  (*************************************************************************)
-
 (***************************************************************************)
 (* We now define Message to be the set of all possible messages that can   *)
 (* be sent in the algorithm.  In TLA+, the expression                      *)
@@ -72,103 +47,61 @@ Message ==
   \cup [type : {"2b"}, acc : Acceptor, bal : Ballot, val : Value]
 -----------------------------------------------------------------------------
 (***************************************************************************)
-(* We now declare the following variables:                                 *)
-(*                                                                         *)
 (*    maxBal - Is the same as the variable of that name in the Voting      *)
 (*             algorithm.                                                  *)
-(*                                                                         *)
 (*    maxVBal                                                              *)
-(*    maxVal - As in the Voting algorithm, a vote is a <<ballot, value>>   *)
-(*             pair.  The pair <<maxVBal[a], maxVal[a]>> is the vote with  *)
+(*    maxVVal - As in the Voting algorithm, a vote is a <<ballot, value>>   *)
+(*             pair.  The pair <<maxVBal[a], maxVVal[a]>> is the vote with  *)
 (*             the largest ballot number cast by acceptor a .  It equals   *)
 (*             <<-1, None>> if  a has not cast any vote.                   *)
-(*                                                                         *)
-(*    msgs   - The set of all messages that have been sent.                *)
-(*                                                                         *)
-(* Messages are added to msgs when they are sent and are never removed.    *)
-(* An operation that is performed upon receipt of a message is represented *)
-(* by an action that is enabled when the message is in msgs.  This         *)
-(* simplifies the spec in the following ways:                              *)
-(*                                                                         *)
-(*   - A message can be broadcast to multiple recipients by just adding    *)
-(*     (a single copy of) it to msgs.                                      *)
-(*                                                                         *)
-(*   - Never removing the message automatically allows the possibility of  *)
-(*     the same message being received twice.                              *)
-(*                                                                         *)
-(* Since we are considering only safety, there is no need to explicitly    *)
-(* model message loss.  The safety part of the spec says only what         *)
-(* messages may be received and does not assert that any message actually  *)
-(* is received.  Thus, there is no difference between a lost message and   *)
-(* one that is never received.                                             *)
 (***************************************************************************)
-VARIABLES maxBal, maxVBal, maxVal, msgs  
-vars == <<maxBal, maxVBal, maxVal, msgs>>
-  (*************************************************************************)
-  (* It's convenient to name the tuple of all variables in a spec.         *)
-  (*************************************************************************)
+VARIABLES
+    maxBal,  \*
+    maxVBal, \*
+    maxVVal, \*
+    msgs,    \* the set of all messages that have been sent
+    cas      \* cas[b \in Ballot]: [cmpVal : Value \cup {None}, swapVal : Value \cup {None}>>  \* TODO
 
-(***************************************************************************)
-(* The invariant that describes the "types" of the variables.              *)
-(***************************************************************************)
+vars == <<maxBal, maxVBal, maxVVal, msgs, cas>>
+----------------------------------------------------------------------------
 TypeOK == /\ maxBal  \in [Acceptor -> Ballot \cup {-1}]
           /\ maxVBal \in [Acceptor -> Ballot \cup {-1}]
-          /\ maxVal  \in [Acceptor -> Value \cup {None}]
+          /\ maxVVal \in [Acceptor -> Value \cup {None}]
           /\ msgs \subseteq Message
-
-(***************************************************************************)
-(* The initial predicate should be obvious from the descriptions of the    *)
-(* variables given above.                                                  *)
-(***************************************************************************)          
+          /\ cas \in [Ballot -> [cmpVal : Value \cup {None},
+                                swapVal : Value \cup {None}]]
+----------------------------------------------------------------------------
 Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxVBal = [a \in Acceptor |-> -1]
-        /\ maxVal  = [a \in Acceptor |-> None]
+        /\ maxVVal = [a \in Acceptor |-> None]
         /\ msgs = {}
+        /\ cas = [b \in Ballot |-> [cmpVal |-> None, swapVal |-> None]]   \* TODO:
 ----------------------------------------------------------------------------
-(***************************************************************************)
-(* We now define the subactions of the next-state actions.  We begin by    *)
-(* defining an action that will be used in those subactions.  The action   *)
-(* Send(m) asserts that message m is added to the set msgs.                *)
-(***************************************************************************)
 Send(m) == msgs' = msgs \cup {m}
+----------------------------------------------------------------------------
+(*
+The leader of ballot b \in Ballot issues an CAS(cmpVal, swapVal) operation
+by sending a Phase1a message.
+*)
+Phase1a(b, cmpVal, swapVal) == 
+    /\ Send([type |-> "1a", bal |-> b])
+    /\ cas' = [cas EXCEPT ![b] = [cmpVal |-> cmpVal, swapVal |-> swapVal]]
+    /\ UNCHANGED <<maxBal, maxVBal, maxVVal>>
+(*
+The acceptor a \in Acceptor receives a Phase1a message
+and sends back a Phase1b message.
 
-(***************************************************************************)
-(* The ballot b leader can perform actions Phase1a(b) and Phase2a(b).  In  *)
-(* the Phase1a(b) action, it sends to all acceptors a phase 1a message (a  *)
-(* message m with m.type = "1a") that begins ballot b.  Remember that the  *)
-(* same process can perform the role of leader for many different ballot   *)
-(* numbers b.  In practice, it will stop playing the role of leader of     *)
-(* ballot b when it begins a higher-numbered ballot.  (Remember the        *)
-(* definition of [type |-> "1a", bal |-> b] from the comment preceding the *)
-(* definition of Message.)                                                 *)
-(***************************************************************************)
-Phase1a(b) == /\ Send([type |-> "1a", bal |-> b])
-              /\ UNCHANGED <<maxBal, maxVBal, maxVal>>
-   (************************************************************************)
-   (* Note that there is no enabling condition to prevent sending the      *)
-   (* phase 1a message a second time.  Since messages are never removed    *)
-   (* from msg, performing the action a second time leaves msg and all the *)
-   (* other spec variables unchanged, so it's a stuttering step.  Since    *)
-   (* stuttering steps are always allowed, there's no reason to try to     *)
-   (* prevent them.                                                        *)
-   (************************************************************************)
-
-(***************************************************************************)
-(* Upon receipt of a ballot b phase 1a message, acceptor a can perform a   *)
-(* Phase1b(a) action only if b > maxBal[a].  The action sets maxBal[a] to  *)
-(* b and sends a phase 1b message to the leader containing the values of   *)
-(* maxVBal[a] and maxVal[a].  This action implements the                   *)
-(* IncreaseMaxBal(a,b) action of the Voting algorithm for b = m.bal.       *)
-(***************************************************************************)                 
+TODO: This action implements the IncreaseMaxBal(a,b) action of the Voting algorithm
+for b = m.bal.
+*)
 Phase1b(a) == 
   /\ \E m \in msgs : 
         /\ m.type = "1a"
         /\ m.bal > maxBal[a]
         /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
         /\ Send([type |-> "1b", acc |-> a, bal |-> m.bal, 
-                  mbal |-> maxVBal[a], mval |-> maxVal[a]])
-  /\ UNCHANGED <<maxVBal, maxVal>>
-
+                 mbal |-> maxVBal[a], mval |-> maxVVal[a]])
+  /\ UNCHANGED <<maxVBal, maxVVal, cas>>
 (***************************************************************************)
 (* In the Phase2a(b, v) action, the ballot b leader sends a type "2a"      *)
 (* message asking the acceptors to vote for v in ballot number b.  The     *)
@@ -197,7 +130,7 @@ Phase1b(a) ==
 (* messages indicating that the sender had voted in some ballot (which     *)
 (* must have been numbered less than b).  You should study the IN clause   *)
 (* to convince yourself that it equals ShowsSafeAt(Q, b, v), defined in    *)
-(* module Voting, using the values of maxBal[a], maxVBal[a], and maxVal[a] *)
+(* module Voting, using the values of maxBal[a], maxVBal[a], and maxVVal[a] *)
 (* `a' sent in its phase 1b message to describe what votes it had cast     *)
 (* when it sent that message.  Moreover, since `a' will no longer cast any *)
 (* votes in ballots numbered less than b, the IN clause implies that       *)
@@ -226,9 +159,7 @@ Phase2a(b, v) ==
                     /\ m.mval = v
                     /\ \A mm \in Q1bv : m.mbal >= mm.mbal 
   /\ Send([type |-> "2a", bal |-> b, val |-> v])
-  /\ UNCHANGED <<maxBal, maxVBal, maxVal>>
-
-
+  /\ UNCHANGED <<maxBal, maxVBal, maxVVal>>
 (***************************************************************************)
 (* The Phase2b(a) action describes what acceptor `a' does when it receives *)
 (* a phase 2a message m, which is sent by the leader of ballot m.bal       *)
@@ -239,7 +170,7 @@ Phase2a(b, v) ==
 (* Phase2b(a) action together with the receipt of the phase 2a message m   *)
 (* implies that the VoteFor(a, m.bal, m.val) action of module Voting is    *)
 (* enabled and can be executed.  The Phase2b(a) message updates maxBal[a], *)
-(* maxVBal[a], and maxVal[a] so their values mean what they were claimed   *)
+(* maxVBal[a], and maxVVal[a] so their values mean what they were claimed   *)
 (* to mean in the comments preceding the variable declarations.            *)
 (***************************************************************************)  
 Phase2b(a) == 
@@ -248,7 +179,7 @@ Phase2b(a) ==
       /\ m.bal >= maxBal[a]
       /\ maxBal' = [maxBal EXCEPT ![a] = m.bal] 
       /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal] 
-      /\ maxVal' = [maxVal EXCEPT ![a] = m.val]
+      /\ maxVVal' = [maxVVal EXCEPT ![a] = m.val]
       /\ Send([type |-> "2b", acc |-> a,
               bal |-> m.bal, val |-> m.val]) 
 

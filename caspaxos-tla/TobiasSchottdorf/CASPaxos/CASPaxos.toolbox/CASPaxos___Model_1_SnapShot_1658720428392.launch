@@ -2,7 +2,7 @@
 <launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
     <stringAttribute key="TLCCmdLineParameters" value=""/>
     <intAttribute key="autoLockTime" value="15"/>
-    <stringAttribute key="configurationName" value="Model_1"/>
+    <stringAttribute key="configurationName" value="Model_1_SnapShot_1658720428392"/>
     <intAttribute key="dfidDepth" value="100"/>
     <booleanAttribute key="dfidMode" value="false"/>
     <intAttribute key="distributedFPSetCount" value="0"/>
@@ -11,11 +11,11 @@
     <stringAttribute key="distributedTLC" value="off"/>
     <stringAttribute key="distributedTLCVMArgs" value=""/>
     <intAttribute key="fpBits" value="0"/>
-    <intAttribute key="fpIndex" value="119"/>
+    <intAttribute key="fpIndex" value="39"/>
     <intAttribute key="maxHeapSize" value="80"/>
     <intAttribute key="maxSetSize" value="1000000"/>
     <booleanAttribute key="mcMode" value="true"/>
-    <stringAttribute key="modelBehaviorInit" value="Init"/>
+    <stringAttribute key="modelBehaviorInit" value="/\  accepted = (a1 :&gt; 2 @@ a2 :&gt; 2 @@ a3 :&gt; 0)&#10;/\  msgs = { [type |-&gt; &quot;prepare-req&quot;, bal |-&gt; 1],&#10;  [type |-&gt; &quot;prepare-req&quot;, bal |-&gt; 2],&#10;  [accepted |-&gt; 1, type |-&gt; &quot;accept-rsp&quot;, acc |-&gt; a1],&#10;  [accepted |-&gt; 2, type |-&gt; &quot;accept-rsp&quot;, acc |-&gt; a1],&#10;  [accepted |-&gt; 2, type |-&gt; &quot;accept-rsp&quot;, acc |-&gt; a2],&#10;  [type |-&gt; &quot;accept-req&quot;, bal |-&gt; 1, newVal |-&gt; 1],&#10;  [type |-&gt; &quot;accept-req&quot;, bal |-&gt; 2, newVal |-&gt; 3],&#10;  [ accepted |-&gt; 0,&#10;    type |-&gt; &quot;prepare-rsp&quot;,&#10;    acc |-&gt; a1,&#10;    promised |-&gt; 1,&#10;    val |-&gt; 0 ],&#10;  [ accepted |-&gt; 0,&#10;    type |-&gt; &quot;prepare-rsp&quot;,&#10;    acc |-&gt; a2,&#10;    promised |-&gt; 2,&#10;    val |-&gt; 0 ],&#10;  [ accepted |-&gt; 0,&#10;    type |-&gt; &quot;prepare-rsp&quot;,&#10;    acc |-&gt; a3,&#10;    promised |-&gt; 1,&#10;    val |-&gt; 0 ],&#10;  [ accepted |-&gt; 1,&#10;    type |-&gt; &quot;prepare-rsp&quot;,&#10;    acc |-&gt; a1,&#10;    promised |-&gt; 2,&#10;    val |-&gt; 1 ] }&#10;/\  prepared = (a1 :&gt; 2 @@ a2 :&gt; 2 @@ a3 :&gt; 1)&#10;/\  value = (a1 :&gt; 3 @@ a2 :&gt; 3 @@ a3 :&gt; 0)"/>
     <stringAttribute key="modelBehaviorNext" value="Next"/>
     <stringAttribute key="modelBehaviorSpec" value="Spec"/>
     <intAttribute key="modelBehaviorSpecType" value="2"/>

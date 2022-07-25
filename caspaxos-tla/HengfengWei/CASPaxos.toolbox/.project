@@ -10,11 +10,6 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>toolbox.builder.PCalAlgorithmSearchingBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>toolbox.natures.TLANature</nature>
@@ -24,6 +19,11 @@
 			<name>CASPaxos.tla</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/CASPaxos.tla</locationURI>
+		</link>
+		<link>
+			<name>Paxos.tla</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Paxos.tla</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
