@@ -1,8 +1,12 @@
 ------------------------- MODULE GryadkaCasRegister -------------------------
-\* Written by Greg Rogers
-\* TLA+ code: https://gist.github.com/grogers0/c7e87f9dfe58c6070b19db9d3c073b72
-\* Post (A TLA+ specification for Gryadka): https://medium.com/@grogepodge/tla-specification-for-gryadka-c80cd625944e
------------------------------------------------------------------------------
+(*
+Written by Greg Rogers
+
+TLA+ code: https://gist.github.com/grogers0/c7e87f9dfe58c6070b19db9d3c073b72
+
+Post (A TLA+ specification for Gryadka): https://medium.com/@grogepodge/tla-specification-for-gryadka-c80cd625944e
+*)
+
 EXTENDS Integers, Sequences, FiniteSets
 -----------------------------------------------------------------------------
 \* Timestamps is the set of possible timestamps for operations to choose from.

@@ -961,51 +961,54 @@ This is a high-level specification of the \ensuremath{CASPaxos} algorithm
 \end{cpar}%
 \vshade{5.0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
+ Search ``\ensuremath{{\langle}\.{+}{\rangle}}'' for the code added for
+ \ensuremath{CASPaxos}.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
 \ensuremath{TODO}: It refines the spec in module Voting.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 13\hspace{1em}} {\EXTENDS} Integers}%
-\@x{\makebox[0pt][r]{\scriptsize 14\hspace{1em}}}\midbar\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 15\hspace{1em}} {\CONSTANTS}}%
- \@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}}\@s{16.4} Value
+\@x{\makebox[0pt][r]{\scriptsize 15\hspace{1em}} {\EXTENDS} Integers}%
+\@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 17\hspace{1em}} {\CONSTANTS}}%
+ \@x{\makebox[0pt][r]{\scriptsize 18\hspace{1em}}\@s{16.4} Value
  ,\,\@s{21.68}}%
 \@y{\@s{0}%
  the set of values to be proposed and chosen from
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 17\hspace{1em}}\@s{16.4} Acceptor
+ \@x{\makebox[0pt][r]{\scriptsize 19\hspace{1em}}\@s{16.4} Acceptor
  ,\,\@s{8.2}}%
 \@y{\@s{0}%
  the set acceptors
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 18\hspace{1em}}\@s{16.4} Quorum\@s{16.17}}%
+\@x{\makebox[0pt][r]{\scriptsize 20\hspace{1em}}\@s{16.4} Quorum\@s{16.17}}%
 \@y{\@s{0}%
  the quorum system on acceptors
 }%
 \@xx{}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 20\hspace{1em}} None \.{\defeq} {\CHOOSE} v
+ \@x{\makebox[0pt][r]{\scriptsize 22\hspace{1em}} None \.{\defeq} {\CHOOSE} v
  \.{:} v \.{\notin} Value}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 22\hspace{1em}} {\ASSUME}\@s{4.1} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}} {\ASSUME}\@s{4.1} \.{\land}
  \A\, Q \.{\in} Quorum \.{:} Q \.{\subseteq} Acceptor}%
- \@x{\makebox[0pt][r]{\scriptsize 23\hspace{1em}}\@s{42.34} \.{\land} \A\, Q1
+ \@x{\makebox[0pt][r]{\scriptsize 25\hspace{1em}}\@s{42.34} \.{\land} \A\, Q1
  ,\, Q2 \.{\in} Quorum \.{:} Q1 \.{\cap} Q2 \.{\neq} \{ \}}%
-\@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 25\hspace{1em}} Ballot \.{\defeq}\@s{4.1}
+\@x{\makebox[0pt][r]{\scriptsize 26\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 27\hspace{1em}} Ballot \.{\defeq}\@s{4.1}
  Nat}%
 \@pvspace{8.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
-Added for \ensuremath{CASPaxos}.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-The set of all possible \ensuremath{CAS} operations.
+ \ensuremath{{\langle}\.{+}{\rangle}} The set of all possible \ensuremath{CAS}
+ operations.
  The \ensuremath{CAS} operations with \ensuremath{cmpVal \.{=} None} are
  initialization operations.
- We do not allow the new value (\ensuremath{swapVal}) to be \ensuremath{None}.
+ We assume that the new values (\ensuremath{i.e}., \ensuremath{swapVal}) are
+ not \ensuremath{None}.
 \end{cpar}%
 \end{lcom}%
  \@x{\makebox[0pt][r]{\scriptsize 34\hspace{1em}} CASOperation \.{\defeq} [
@@ -1029,105 +1032,97 @@ The set of all possible \ensuremath{CAS} operations.
  \@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
  type\@s{2.83} \.{:} \{\@w{2b} \} ,\, acc \.{:} Acceptor ,\, bal \.{:} Ballot
  ,\, val \.{:} Value ]}%
-\@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}}}\midbar\@xx{}%
-\begin{lcom}{0}%
-\begin{cpar}{0}{T}{T}{0}{2.5}{%
-\ensuremath{maxBal \.{-}}}%
-Is the same as the variable of that name in the Voting
- algorithm.
-\end{cpar}%
-\begin{cpar}{1}{F}{F}{0}{0}{}%
-\ensuremath{maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
+ type\@s{2.83} \.{:} \{\@w{response} \} ,\, bal \.{:} Ballot ]\@s{4.1}}%
+\@y{\@s{0}%
+ \ensuremath{{\langle}\.{+}{\rangle}} the messages sent to the user
 }%
-\end{cpar}%
-\begin{cpar}{0}{T}{F}{0}{22.5}{}%
- \ensuremath{maxVVal \.{-}} As in the Voting algorithm, a vote is a
- \ensuremath{{\langle}ballot,\, value{\rangle}
- } pair. The pair \ensuremath{{\langle}maxVBal[a],\, maxVVal[a]{\rangle}} is
- the vote with
- the largest ballot number cast by acceptor a . It equals
- \ensuremath{{\langle}\.{-}1,\, None{\rangle}} if a has not cast any vote.
-\end{cpar}%
-\end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 52\hspace{1em}} {\VARIABLES}}%
- \@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}}\@s{16.4} maxBal
- ,\,\@s{7.43}}%
-\@y{}%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 54\hspace{1em}}\@s{16.4} maxVBal ,\,}%
-\@y{}%
+\@x{\makebox[0pt][r]{\scriptsize 43\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}} {\VARIABLES}}%
+\@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}}\@s{16.4}}%
+\@y{\@s{0}%
+ \ensuremath{maxBal[a]}: the last ballot the acceptor \ensuremath{a \.{\in}
+ Acceptor} has voted for
+}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 55\hspace{1em}}\@s{16.4} maxVVal
- ,\,\@s{0.37}}%
-\@y{}%
+\@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}}\@s{16.4} maxBal ,\,}%
+\@x{\makebox[0pt][r]{\scriptsize 47\hspace{1em}}\@s{16.4}}%
+\@y{\@s{0}%
+ \ensuremath{{\langle}maxVBal[a],\, maxVVal[a]{\rangle}} is the vote with the
+ largest ballot cast by acceptor \ensuremath{a \.{\in} Acceptor}.
+}%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 56\hspace{1em}}\@s{16.4} msgs ,\,\@s{19.32}}%
+\@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}}\@s{16.4}}%
+\@y{\@s{0}%
+ It equals \ensuremath{{\langle}\.{-}1,\, None{\rangle}} if \ensuremath{a
+ \.{\in} Acceptor} has not cast any vote.
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 49\hspace{1em}}\@s{16.4} maxVBal ,\, maxVVal
+ ,\,}%
+\@x{\makebox[0pt][r]{\scriptsize 50\hspace{1em}}\@s{16.4} msgs ,\,\@s{12.29}}%
 \@y{\@s{0}%
  the set of all messages that have been sent
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 57\hspace{1em}}\@s{16.4} ops\@s{32.07}}%
+\@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}}\@s{16.4} ops\@s{25.05}}%
 \@y{\@s{0}%
- \ensuremath{ops[b \.{\in} Ballot]}: the \ensuremath{CAS} operation to be
- proposed at ballot \ensuremath{b
-}}%
-\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}}\@s{63.61}}%
-\@y{\@s{0}%
- added for \ensuremath{CASPaxos
+ \ensuremath{{\langle}\.{+}{\rangle} ops[b]}: the \ensuremath{CAS} operation
+ to be proposed at ballot \ensuremath{b \.{\in} Ballot
 }}%
 \@xx{}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}} vars \.{\defeq} {\langle}
+ \@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}} vars \.{\defeq} {\langle}
  maxBal ,\, maxVBal ,\, maxVVal ,\, msgs ,\, ops {\rangle}}%
-\@x{\makebox[0pt][r]{\scriptsize 61\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}} TypeOK \.{\defeq} \.{\land}
+\@x{\makebox[0pt][r]{\scriptsize 54\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 55\hspace{1em}} TypeOK \.{\defeq} \.{\land}
  maxBal\@s{7.43} \.{\in} [ Acceptor \.{\rightarrow} Ballot \.{\cup} \{ \.{-}
  1 \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}}\@s{56.14} \.{\land} maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 56\hspace{1em}}\@s{56.14} \.{\land} maxVBal
  \.{\in} [ Acceptor \.{\rightarrow} Ballot \.{\cup} \{ \.{-} 1 \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 64\hspace{1em}}\@s{56.14} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 57\hspace{1em}}\@s{56.14} \.{\land}
  maxVVal\@s{0.37} \.{\in} [ Acceptor \.{\rightarrow} Value \.{\cup} \{ None
  \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}}\@s{56.14} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}}\@s{56.14} \.{\land} msgs
  \.{\subseteq} Message}%
- \@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}}\@s{56.14} \.{\land} ops
+ \@x{\makebox[0pt][r]{\scriptsize 59\hspace{1em}}\@s{56.14} \.{\land} ops
  \.{\in} [ Ballot \.{\rightarrow} CASOperation ]}%
-\@x{\makebox[0pt][r]{\scriptsize 67\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}} Init \.{\defeq} \.{\land}
- maxBal\@s{7.43} \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
- \@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}\@s{35.70} \.{\land} maxVBal
- \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
- \@x{\makebox[0pt][r]{\scriptsize 70\hspace{1em}}\@s{35.70} \.{\land}
- maxVVal\@s{0.37} \.{=} [ a \.{\in} Acceptor \.{\mapsto} None ]}%
- \@x{\makebox[0pt][r]{\scriptsize 71\hspace{1em}}\@s{35.70} \.{\land} msgs
- \.{=} \{ \}}%
-\@x{\makebox[0pt][r]{\scriptsize 72\hspace{1em}}\@s{35.70}}%
 \@y{\@s{0}%
- \ensuremath{ops} remains unchanged; we utilize \ensuremath{TLC} to explore
- all possible \ensuremath{CAS} operations.
+ \ensuremath{{\langle}\.{+}{\rangle}
+}}%
+\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 61\hspace{1em}} Init \.{\defeq} \.{\land}
+ maxBal\@s{7.43} \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
+ \@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}}\@s{35.70} \.{\land} maxVBal
+ \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
+ \@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}}\@s{35.70} \.{\land}
+ maxVVal\@s{0.37} \.{=} [ a \.{\in} Acceptor \.{\mapsto} None ]}%
+ \@x{\makebox[0pt][r]{\scriptsize 64\hspace{1em}}\@s{35.70} \.{\land} msgs
+ \.{=} \{ \}}%
+\@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}}\@s{35.70}}%
+\@y{\@s{0}%
+ \ensuremath{{\langle}\.{+}{\rangle} ops} remains unchanged; we utilize
+ \ensuremath{TLC} to explore all possible \ensuremath{CAS} operations.
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 73\hspace{1em}}\@s{35.70} \.{\land} ops
+ \@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}}\@s{35.70} \.{\land} ops
  \.{\in} [ Ballot \.{\rightarrow} CASOperation ]}%
-\@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 75\hspace{1em}} Send ( m ) \.{\defeq} msgs
+\@x{\makebox[0pt][r]{\scriptsize 67\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}} Send ( m ) \.{\defeq} msgs
  \.{'} \.{=} msgs \.{\cup} \{ m \}}%
-\@x{\makebox[0pt][r]{\scriptsize 76\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}}\midbar\@xx{}%
 \begin{lcom}{0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-\ensuremath{TODO}: define the \ensuremath{CAS(cmpVal,\, swapVal)} interface
-\end{cpar}%
-\vshade{15.0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
  The leader of ballot \ensuremath{b \.{\in} Ballot} sends a
  \ensuremath{Phase1a} message.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 84\hspace{1em}} Phase1a ( b ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 85\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
+\@x{\makebox[0pt][r]{\scriptsize 73\hspace{1em}} Phase1a ( b ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
  Send ( [ type \.{\mapsto}\@w{1a} ,\, bal \.{\mapsto} b ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 86\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
+ \@x{\makebox[0pt][r]{\scriptsize 75\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
  {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1142,21 +1137,21 @@ For refinement:
  Voting algorithm for \ensuremath{b \.{=} m.bal}.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 94\hspace{1em}} Phase1b ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 95\hspace{1em}}\@s{8.2} \.{\land} \E\, m
+\@x{\makebox[0pt][r]{\scriptsize 83\hspace{1em}} Phase1b ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 84\hspace{1em}}\@s{8.2} \.{\land} \E\, m
  \.{\in} msgs \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 96\hspace{1em}}\@s{26.53} \.{\land} m . type
+ \@x{\makebox[0pt][r]{\scriptsize 85\hspace{1em}}\@s{26.53} \.{\land} m . type
  \.{=}\@w{1a}}%
- \@x{\makebox[0pt][r]{\scriptsize 97\hspace{1em}}\@s{26.53} \.{\land} m . bal
+ \@x{\makebox[0pt][r]{\scriptsize 86\hspace{1em}}\@s{26.53} \.{\land} m . bal
  \.{>} maxBal [ a ]}%
- \@x{\makebox[0pt][r]{\scriptsize 98\hspace{1em}}\@s{26.53} \.{\land} maxBal
+ \@x{\makebox[0pt][r]{\scriptsize 87\hspace{1em}}\@s{26.53} \.{\land} maxBal
  \.{'} \.{=} [ maxBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 99\hspace{1em}}\@s{26.53} \.{\land} Send ( [
+ \@x{\makebox[0pt][r]{\scriptsize 88\hspace{1em}}\@s{26.53} \.{\land} Send ( [
  type\@s{2.83} \.{\mapsto}\@w{1b} ,\, acc \.{\mapsto} a ,\, bal \.{\mapsto} m
  . bal ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 100\hspace{1em}}\@s{66.29} mbal \.{\mapsto}
+ \@x{\makebox[0pt][r]{\scriptsize 89\hspace{1em}}\@s{66.29} mbal \.{\mapsto}
  maxVBal [ a ] ,\, mval \.{\mapsto} maxVVal [ a ] ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 101\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 90\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1174,60 +1169,61 @@ For refinement:
  module Voting will be true when acceptor a receives that message.
 \end{cpar}%
 \end{lcom}%
- \@x{\makebox[0pt][r]{\scriptsize 111\hspace{1em}} Phase2a ( b ,\, v )
+ \@x{\makebox[0pt][r]{\scriptsize 100\hspace{1em}} Phase2a ( b ,\, v )
  \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 112\hspace{1em}}\@s{8.2} \.{\land} {\lnot}
+ \@x{\makebox[0pt][r]{\scriptsize 101\hspace{1em}}\@s{8.2} \.{\land} {\lnot}
  \E\, m \.{\in} msgs\@s{7.89} \.{:} m . type \.{=}\@w{2a} \.{\land} m . bal
  \.{=} b}%
- \@x{\makebox[0pt][r]{\scriptsize 113\hspace{1em}}\@s{8.2} \.{\land} \E\, Q
+ \@x{\makebox[0pt][r]{\scriptsize 102\hspace{1em}}\@s{8.2} \.{\land} \E\, Q
  \.{\in} Quorum \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 114\hspace{1em}}\@s{26.53} \.{\LET} Q1b
+ \@x{\makebox[0pt][r]{\scriptsize 103\hspace{1em}}\@s{26.53} \.{\LET} Q1b
  \.{\defeq} \{ m \.{\in} msgs\@s{6.20} \.{:} \.{\land} m . type \.{=}\@w{1b}}%
- \@x{\makebox[0pt][r]{\scriptsize 115\hspace{1em}}\@s{148.25} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 104\hspace{1em}}\@s{148.25} \.{\land} m .
  acc \.{\in} Q}%
- \@x{\makebox[0pt][r]{\scriptsize 116\hspace{1em}}\@s{148.25} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 105\hspace{1em}}\@s{148.25} \.{\land} m .
  bal\@s{1.57} \.{=} b \}}%
- \@x{\makebox[0pt][r]{\scriptsize 117\hspace{1em}}\@s{51.03} Q1bv \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 106\hspace{1em}}\@s{51.03} Q1bv \.{\defeq}
  \{ m \.{\in} Q1b \.{:} m . mbal \.{\geq} 0 \}}%
- \@x{\makebox[0pt][r]{\scriptsize 118\hspace{1em}}\@s{26.53} \.{\IN}\@s{4.09}
+ \@x{\makebox[0pt][r]{\scriptsize 107\hspace{1em}}\@s{26.53} \.{\IN}\@s{4.09}
  \.{\land} \A\, a \.{\in} Q \.{:} \E\, m \.{\in} Q1b \.{:} m . acc \.{=} a}%
- \@x{\makebox[0pt][r]{\scriptsize 119\hspace{1em}}\@s{51.03} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 108\hspace{1em}}\@s{51.03} \.{\land}
  \.{\lor} \.{\land} Q1bv \.{=} \{ \}\@s{4.1}}%
 \@y{\@s{0}%
- \ensuremath{CAS(None,\, v)} as an initialization operation
+ \ensuremath{{\langle}\.{+}{\rangle} CAS(None,\, v)} as an initialization
+ operation
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 120\hspace{1em}}\@s{73.25} \.{\land} ops [ b
+ \@x{\makebox[0pt][r]{\scriptsize 109\hspace{1em}}\@s{73.25} \.{\land} ops [ b
  ] . cmpVal \.{=} None\@s{4.1}}%
 \@y{\@s{0}%
- added for \ensuremath{CASPaxos
+ \ensuremath{{\langle}\.{+}{\rangle}
 }}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 121\hspace{1em}}\@s{62.14} \.{\lor} \E\, m
+ \@x{\makebox[0pt][r]{\scriptsize 110\hspace{1em}}\@s{62.14} \.{\lor} \E\, m
  \.{\in} Q1bv \.{:}\@s{4.1}}%
 \@y{\@s{0}%
- \ensuremath{CAS(v,\, ops[b].swapVal)} as an atomic compare-and-swap operation
+ \ensuremath{{\langle}\.{+}{\rangle} CAS(v,\, ops[b].swapVal)} as an atomic
+ compare-and-swap operation
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 122\hspace{1em}}\@s{81.45} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 111\hspace{1em}}\@s{81.45} \.{\land} m .
  mval \.{=} v}%
- \@x{\makebox[0pt][r]{\scriptsize 123\hspace{1em}}\@s{81.45} \.{\land} \A\, mm
+ \@x{\makebox[0pt][r]{\scriptsize 112\hspace{1em}}\@s{81.45} \.{\land} \A\, mm
  \.{\in} Q1bv \.{:} m . mbal \.{\geq} mm . mbal}%
- \@x{\makebox[0pt][r]{\scriptsize 124\hspace{1em}}\@s{81.45} \.{\land} ops [ b
+ \@x{\makebox[0pt][r]{\scriptsize 113\hspace{1em}}\@s{81.45} \.{\land} ops [ b
  ] . cmpVal \.{=} v\@s{4.1}}%
 \@y{\@s{0}%
- added for \ensuremath{CASPaxos
+ \ensuremath{{\langle}\.{+}{\rangle}
 }}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 125\hspace{1em}}\@s{8.2} \.{\land} Send ( [
+ \@x{\makebox[0pt][r]{\scriptsize 114\hspace{1em}}\@s{8.2} \.{\land} Send ( [
  type \.{\mapsto}\@w{2a} ,\, bal \.{\mapsto} b ,\, val \.{\mapsto} ops [ b ]
  . swapVal ] )\@s{4.1}}%
 \@y{\@s{0}%
- modified for \ensuremath{CASPaxos}: \ensuremath{val \.{\mapsto}
- ops[b].swapVal
+ \ensuremath{{\langle}\.{+}{\rangle} val \.{\mapsto} ops[b].swapVal
 }}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 126\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 115\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1246,49 +1242,66 @@ For refinement:
  Voting is enabled and can be executed.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 138\hspace{1em}} Phase2b ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 139\hspace{1em}}\@s{8.2} \.{\land} \E\, m
+\@x{\makebox[0pt][r]{\scriptsize 127\hspace{1em}} Phase2b ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 128\hspace{1em}}\@s{8.2} \.{\land} \E\, m
  \.{\in} msgs \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 140\hspace{1em}}\@s{26.53} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 129\hspace{1em}}\@s{26.53} \.{\land} m .
  type \.{=}\@w{2a}}%
- \@x{\makebox[0pt][r]{\scriptsize 141\hspace{1em}}\@s{26.53} \.{\land} m . bal
+ \@x{\makebox[0pt][r]{\scriptsize 130\hspace{1em}}\@s{26.53} \.{\land} m . bal
  \.{\geq} maxBal [ a ]}%
- \@x{\makebox[0pt][r]{\scriptsize 142\hspace{1em}}\@s{26.53} \.{\land} maxBal
+ \@x{\makebox[0pt][r]{\scriptsize 131\hspace{1em}}\@s{26.53} \.{\land} maxBal
  \.{'} \.{=} [ maxBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 143\hspace{1em}}\@s{26.53} \.{\land} maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 132\hspace{1em}}\@s{26.53} \.{\land} maxVBal
  \.{'} \.{=} [ maxVBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 144\hspace{1em}}\@s{26.53} \.{\land} maxVVal
+ \@x{\makebox[0pt][r]{\scriptsize 133\hspace{1em}}\@s{26.53} \.{\land} maxVVal
  \.{'}\@s{0.37} \.{=} [ maxVVal {\EXCEPT} {\bang} [ a ]\@s{0.37} \.{=} m .
  val ]}%
- \@x{\makebox[0pt][r]{\scriptsize 145\hspace{1em}}\@s{26.53} \.{\land} Send (
+ \@x{\makebox[0pt][r]{\scriptsize 134\hspace{1em}}\@s{26.53} \.{\land} Send (
  [ type \.{\mapsto}\@w{2b} ,\, acc \.{\mapsto} a ,\, bal \.{\mapsto} m . bal
  ,\, val \.{\mapsto} m . val ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 146\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 135\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
-The leader of ballot \ensuremath{b \.{\in} Ballot} responds to the user.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-\ensuremath{TODO}: to finish it
+ \ensuremath{{\langle}\.{+}{\rangle}} The leader of ballot \ensuremath{b
+ \.{\in} Ballot} responds to the user.
 \end{cpar}%
 \end{lcom}%
- \@x{\makebox[0pt][r]{\scriptsize 152\hspace{1em}} Respond ( b ) \.{\defeq}
- {\FALSE}}%
-\@x{\makebox[0pt][r]{\scriptsize 153\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 154\hspace{1em}} Next \.{\defeq} \.{\lor}
+\@x{\makebox[0pt][r]{\scriptsize 139\hspace{1em}} Respond ( b ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 140\hspace{1em}}\@s{8.2} \.{\land} {\lnot}
+ \E\, m \.{\in} msgs\@s{7.89} \.{:} m . type \.{=}\@w{response} \.{\land} m .
+ bal \.{=} b}%
+ \@x{\makebox[0pt][r]{\scriptsize 141\hspace{1em}}\@s{8.2} \.{\land} \E\, Q
+ \.{\in} Quorum \.{:}}%
+ \@x{\makebox[0pt][r]{\scriptsize 142\hspace{1em}}\@s{26.53} \.{\LET} Q2b
+ \.{\defeq} \{ m \.{\in} msgs \.{:} \.{\land} m . type \.{=}\@w{2b}}%
+ \@x{\makebox[0pt][r]{\scriptsize 143\hspace{1em}}\@s{142.04} \.{\land} m .
+ acc \.{\in} Q}%
+ \@x{\makebox[0pt][r]{\scriptsize 144\hspace{1em}}\@s{142.04} \.{\land} m .
+ bal\@s{1.57} \.{=} b \}}%
+ \@x{\makebox[0pt][r]{\scriptsize 145\hspace{1em}}\@s{26.53} \.{\IN} \A\, a
+ \.{\in} Q \.{:} \E\, m \.{\in} Q2b \.{:} m . acc \.{=} a}%
+ \@x{\makebox[0pt][r]{\scriptsize 146\hspace{1em}}\@s{8.2} \.{\land} Send ( [
+ type \.{\mapsto}\@w{response} ,\, bal \.{\mapsto} b ] )}%
+ \@x{\makebox[0pt][r]{\scriptsize 147\hspace{1em}}\@s{8.2} \.{\land}
+ {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal ,\, ops {\rangle}}%
+\@x{\makebox[0pt][r]{\scriptsize 148\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 149\hspace{1em}} Next \.{\defeq} \.{\lor}
  \E\, b\@s{0.64} \.{\in} Ballot \.{:} \.{\lor} Phase1a ( b )}%
- \@x{\makebox[0pt][r]{\scriptsize 155\hspace{1em}}\@s{112.86} \.{\lor} \E\, v
+ \@x{\makebox[0pt][r]{\scriptsize 150\hspace{1em}}\@s{112.86} \.{\lor} \E\, v
  \.{\in} Value \.{:} Phase2a ( b ,\, v )}%
- \@x{\makebox[0pt][r]{\scriptsize 156\hspace{1em}}\@s{112.86} \.{\lor} Respond
+ \@x{\makebox[0pt][r]{\scriptsize 151\hspace{1em}}\@s{112.86} \.{\lor} Respond
  ( b )}%
- \@x{\makebox[0pt][r]{\scriptsize 157\hspace{1em}}\@s{39.83} \.{\lor} \E\, a
+\@y{\@s{0}%
+ \ensuremath{{\langle}\.{+}{\rangle}
+}}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 152\hspace{1em}}\@s{39.83} \.{\lor} \E\, a
  \.{\in} Acceptor \.{:} \.{\lor} Phase1b ( a )}%
- \@x{\makebox[0pt][r]{\scriptsize 158\hspace{1em}}\@s{124.24} \.{\lor} Phase2b
+ \@x{\makebox[0pt][r]{\scriptsize 153\hspace{1em}}\@s{124.24} \.{\lor} Phase2b
  ( a )}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 160\hspace{1em}} Spec\@s{1.46} \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 155\hspace{1em}} Spec\@s{1.46} \.{\defeq}
  Init \.{\land} {\Box} [ Next ]_{ vars}}%
-\@x{\makebox[0pt][r]{\scriptsize 161\hspace{1em}}}\bottombar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 156\hspace{1em}}}\bottombar\@xx{}%
 \end{document}

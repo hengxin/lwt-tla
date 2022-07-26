@@ -941,313 +941,312 @@
 \setboolean{shading}{true}
  \@x{\makebox[0pt][r]{\scriptsize 1\hspace{1em}}}\moduleLeftDash\@xx{
  {\MODULE} GryadkaCasRegister}\moduleRightDash\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 2\hspace{1em}}}%
-\@y{\@s{0}%
- Written by \ensuremath{Greg} \ensuremath{Rogers
-}}%
-\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 3\hspace{1em}}}%
-\@y{\@s{0}%
- TLA+ code: https:\ensuremath{\.{\slsl}gist.github.com}/\ensuremath{grogers0}/\ensuremath{c7e87f9dfe58c6070b19db9d3c073b72
-}}%
-\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 4\hspace{1em}}}%
-\@y{\@s{0}%
+\begin{lcom}{0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+Written by \ensuremath{Greg} \ensuremath{Rogers
+}%
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+TLA+ code: https:\ensuremath{\.{\slsl}gist.github.com}/\ensuremath{grogers0}/\ensuremath{c7e87f9dfe58c6070b19db9d3c073b72
+}%
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
  Post (A TLA+ specification for \ensuremath{Gryadka}):
  https:\ensuremath{\.{\slsl}medium.com}/@grogepodge/tla-specification-for-gryadka-c80cd625944e
-}%
-\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 5\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 6\hspace{1em}} {\EXTENDS} Integers ,\,
+\end{cpar}%
+\end{lcom}%
+ \@x{\makebox[0pt][r]{\scriptsize 10\hspace{1em}} {\EXTENDS} Integers ,\,
  Sequences ,\, FiniteSets}%
-\@x{\makebox[0pt][r]{\scriptsize 7\hspace{1em}}}\midbar\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 8\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 11\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 12\hspace{1em}}}%
 \@y{\@s{0}%
  Timestamps is the set of possible timestamps for operations to choose from.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 9\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 13\hspace{1em}}}%
 \@y{\@s{10.0}%
  Each operation uses a unique timestamp.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 10\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 14\hspace{1em}}}%
 \@y{\@s{0}%
  Values is the set of possible values to set the register to.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 11\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 15\hspace{1em}}}%
 \@y{\@s{0}%
  Acceptors is the set of nodes which act as acceptors in the paxos sense.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 12\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{Quorums} is the set of all possible quorums, typically simple
  majorities.
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 13\hspace{1em}} {\CONSTANTS} Timestamps ,\,
+ \@x{\makebox[0pt][r]{\scriptsize 17\hspace{1em}} {\CONSTANTS} Timestamps ,\,
  Values ,\, Acceptors ,\, Quorums}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 15\hspace{1em}} {\ASSUME} Timestamps
+ \@x{\makebox[0pt][r]{\scriptsize 19\hspace{1em}} {\ASSUME} Timestamps
  \.{\subseteq} Nat}%
- \@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}} {\ASSUME} IsFiniteSet (
+ \@x{\makebox[0pt][r]{\scriptsize 20\hspace{1em}} {\ASSUME} IsFiniteSet (
  Timestamps )}%
-\@x{\makebox[0pt][r]{\scriptsize 17\hspace{1em}} NoTS \.{\defeq} \.{-} 1}%
- \@x{\makebox[0pt][r]{\scriptsize 18\hspace{1em}} {\ASSUME} NoTS \.{\notin}
+\@x{\makebox[0pt][r]{\scriptsize 21\hspace{1em}} NoTS \.{\defeq} \.{-} 1}%
+ \@x{\makebox[0pt][r]{\scriptsize 22\hspace{1em}} {\ASSUME} NoTS \.{\notin}
  Timestamps}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 20\hspace{1em}} {\ASSUME} Quorums
+ \@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}} {\ASSUME} Quorums
  \.{\subseteq} {\SUBSET} Acceptors}%
- \@x{\makebox[0pt][r]{\scriptsize 21\hspace{1em}} {\ASSUME} \A\, q1 ,\, q2
+ \@x{\makebox[0pt][r]{\scriptsize 25\hspace{1em}} {\ASSUME} \A\, q1 ,\, q2
  \.{\in} Quorums \.{:} q1 \.{\cap} q2 \.{\neq} \{ \}}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 23\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 27\hspace{1em}}}%
 \@y{\@s{0}%
  The initial value is chosen arbitrarily
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}} InitVal \.{\defeq} {\CHOOSE}
+ \@x{\makebox[0pt][r]{\scriptsize 28\hspace{1em}} InitVal \.{\defeq} {\CHOOSE}
  v \.{\in} Values \.{:} {\TRUE}}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 26\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 30\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{msgs} is the buffer of all messages. Messages can be delivered
  out of order or duplicated.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 27\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 31\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{ops} is the mapping from timestamp to \ensuremath{CAS(old,\,
  new)} for operations being proposed.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 28\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 32\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{acceptorTS} is the timestamp each acceptor is prepared for, only
  operations which match this value are accepted.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 29\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 33\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{acceptorValTS} is the timestamp of the last accepted value for
  each acceptor, or \ensuremath{NoTS} is none has been accepted yet.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 30\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 34\hspace{1em}}}%
 \@y{\@s{0}%
  \ensuremath{acceptorValue} is the last accepted value for each acceptor, or
  \ensuremath{InitVal} if none has been accepted yet.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 31\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 35\hspace{1em}}}%
 \@y{\@s{0}%
  history is the actual order of invoke/response actions for the operations
  identified by the timestamp.
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 32\hspace{1em}} {\VARIABLES} msgs ,\, ops
+ \@x{\makebox[0pt][r]{\scriptsize 36\hspace{1em}} {\VARIABLES} msgs ,\, ops
  ,\, acceptorTS ,\, acceptorValTS ,\, acceptorValue ,\, history}%
-\@x{\makebox[0pt][r]{\scriptsize 33\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 34\hspace{1em}} Messages \.{\defeq} [ type
+\@x{\makebox[0pt][r]{\scriptsize 37\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 38\hspace{1em}} Messages \.{\defeq} [ type
  \.{:} \{\@w{prepare} \} ,\, acceptor\@s{1.61} \.{:} Acceptors ,\, ts \.{:}
  Timestamps ]}%
- \@x{\makebox[0pt][r]{\scriptsize 35\hspace{1em}}\@s{20.5} \.{\cup} [
+ \@x{\makebox[0pt][r]{\scriptsize 39\hspace{1em}}\@s{20.5} \.{\cup} [
  type\@s{28.24} \.{:} \{\@w{promise} \} ,\, acceptor \.{:} Acceptors ,\, ts
  \.{:} Timestamps ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 36\hspace{1em}}\@s{34.38} prevTS \.{:}
+ \@x{\makebox[0pt][r]{\scriptsize 40\hspace{1em}}\@s{34.38} prevTS \.{:}
  Timestamps \.{\cup} \{ NoTS \} ,\, prevVal\@s{0.09} \.{:} Values ]}%
- \@x{\makebox[0pt][r]{\scriptsize 37\hspace{1em}}\@s{20.5} \.{\cup} [ type
+ \@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}}\@s{20.5} \.{\cup} [ type
  \.{:} \{\@w{accept} \} ,\, acceptor \.{:} Acceptors ,\, ts \.{:} Timestamps
  ,\, val \.{:} Values ]}%
- \@x{\makebox[0pt][r]{\scriptsize 38\hspace{1em}}\@s{20.5} \.{\cup} [ type
+ \@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}}\@s{20.5} \.{\cup} [ type
  \.{:} \{\@w{accepted} \} ,\, acceptor \.{:} Acceptors ,\, ts \.{:}
  Timestamps ,\, val \.{:} Values ]}%
-\@x{\makebox[0pt][r]{\scriptsize 39\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 43\hspace{1em}}}%
 \@y{\@s{0}%
  Each operation represents a \ensuremath{CAS} from an \ensuremath{oldVal} to
  a \ensuremath{newVal}. In \ensuremath{Gryadka},
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 40\hspace{1em}}}%
+\@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}}}%
 \@y{\@s{10.0}%
  reads are treated the same as \ensuremath{CAS(val,\, val)
 }}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}} Operations \.{\defeq} [
+ \@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}} Operations \.{\defeq} [
  oldVal \.{:} Values ,\, newVal \.{:} Values ]}%
- \@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}} Events\@s{7.41} \.{\defeq} [
+ \@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}} Events\@s{7.41} \.{\defeq} [
  type \.{:} \{\@w{invoke} ,\,\@w{response} \} ,\, ts \.{:} Timestamps ]}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}} TypeOK \.{\defeq} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}} TypeOK \.{\defeq} \.{\land}
  msgs \.{\subseteq} Messages}%
- \@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}}\@s{56.14} \.{\land} ops
+ \@x{\makebox[0pt][r]{\scriptsize 49\hspace{1em}}\@s{56.14} \.{\land} ops
  \.{\in} [ Timestamps \.{\rightarrow} Operations ]}%
- \@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}}\@s{56.14} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 50\hspace{1em}}\@s{56.14} \.{\land}
  acceptorTS \.{\in} [ Acceptors \.{\rightarrow} Timestamps \.{\cup} \{ NoTS
  \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 47\hspace{1em}}\@s{56.14} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}}\@s{56.14} \.{\land}
  acceptorValTS \.{\in} [ Acceptors \.{\rightarrow} Timestamps \.{\cup} \{
  NoTS \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}}\@s{56.14} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 52\hspace{1em}}\@s{56.14} \.{\land}
  acceptorValue\@s{3.25} \.{\in} [ Acceptors \.{\rightarrow} Values ]}%
- \@x{\makebox[0pt][r]{\scriptsize 49\hspace{1em}}\@s{56.14} \.{\land} history
+ \@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}}\@s{56.14} \.{\land} history
  \.{\in} Seq ( Events )}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}} Init \.{\defeq} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 55\hspace{1em}} Init \.{\defeq} \.{\land}
  msgs \.{=} \{ \}}%
- \@x{\makebox[0pt][r]{\scriptsize 52\hspace{1em}}\@s{35.70} \.{\land} ops
+ \@x{\makebox[0pt][r]{\scriptsize 56\hspace{1em}}\@s{35.70} \.{\land} ops
  \.{\in} [ Timestamps \.{\rightarrow} Operations ]}%
- \@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}}\@s{35.70} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 57\hspace{1em}}\@s{35.70} \.{\land}
  acceptorTS \.{=} [ a \.{\in} Acceptors \.{\mapsto} NoTS ]}%
- \@x{\makebox[0pt][r]{\scriptsize 54\hspace{1em}}\@s{35.70} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}}\@s{35.70} \.{\land}
  acceptorValTS \.{=} [ a \.{\in} Acceptors \.{\mapsto} NoTS ]}%
- \@x{\makebox[0pt][r]{\scriptsize 55\hspace{1em}}\@s{35.70} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 59\hspace{1em}}\@s{35.70} \.{\land}
  acceptorValue\@s{3.25} \.{=} [ a \.{\in} Acceptors \.{\mapsto} InitVal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 56\hspace{1em}}\@s{35.70} \.{\land} history
+ \@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}}\@s{35.70} \.{\land} history
  \.{=} {\langle} {\rangle}}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 59\hspace{1em}} SelectMessages ( type ,\, ts
+\@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}} SelectMessages ( type ,\, ts
  ) \.{\defeq} \{ m \.{\in} msgs \.{:} m . type \.{=} type \.{\land} m . ts
  \.{=} ts \}}%
- \@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}} PromisedValue ( ts )
+ \@x{\makebox[0pt][r]{\scriptsize 64\hspace{1em}} PromisedValue ( ts )
  \.{\defeq} \.{\LET} promiseMsgs \.{\defeq} SelectMessages (\@w{promise} ,\,
  ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 61\hspace{1em}}\@s{100.08} \.{\IN} (
+ \@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}}\@s{100.08} \.{\IN} (
  {\CHOOSE} m \.{\in} promiseMsgs \.{:} \A\, m2 \.{\in} promiseMsgs \.{:} m .
  prevTS \.{\geq} m2 . prevTS ) . prevVal}%
-\@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}} Prepare ( ts ) \.{\defeq}
+\@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 67\hspace{1em}} Prepare ( ts ) \.{\defeq}
  \.{\land} SelectMessages (\@w{prepare} ,\, ts ) \.{=} \{ \}}%
 \@y{\@s{0}%
  Each timestamp must be unique
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 64\hspace{1em}}\@s{68.75} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}}\@s{68.75} \.{\land} msgs
  \.{'} \.{=} msgs \.{\cup} [ type \.{:} \{\@w{prepare} \} ,\, acceptor \.{:}
  Acceptors ,\, ts \.{:} \{ ts \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}}\@s{68.75} \.{\land} history
+ \@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}\@s{68.75} \.{\land} history
  \.{'} \.{=} Append ( history ,\, [ type \.{\mapsto}\@w{invoke} ,\, ts
  \.{\mapsto} ts ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}}\@s{68.75} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 70\hspace{1em}}\@s{68.75} \.{\land}
  {\UNCHANGED} {\langle} ops ,\, acceptorTS ,\, acceptorValTS ,\,
  acceptorValue {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}} RecvPrepare ( a ,\, ts )
+ \@x{\makebox[0pt][r]{\scriptsize 72\hspace{1em}} RecvPrepare ( a ,\, ts )
  \.{\defeq} \.{\land} acceptorTS [ a ] \.{=} NoTS \.{\lor} acceptorTS [ a
  ]\@s{3.11} \.{<} ts}%
- \@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}\@s{100.81} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 73\hspace{1em}}\@s{100.81} \.{\land}
  acceptorTS \.{'} \.{=} [ acceptorTS {\EXCEPT} {\bang} [ a ] \.{=} ts ]}%
- \@x{\makebox[0pt][r]{\scriptsize 70\hspace{1em}}\@s{100.81} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}}\@s{100.81} \.{\land} msgs
  \.{'} \.{=} msgs \.{\cup} \{ [ type \.{\mapsto}\@w{promise} ,\, acceptor
  \.{\mapsto} a ,\, ts \.{\mapsto} ts ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 71\hspace{1em}}\@s{190.50} prevTS
+ \@x{\makebox[0pt][r]{\scriptsize 75\hspace{1em}}\@s{190.50} prevTS
  \.{\mapsto} acceptorValTS [ a ] ,\, prevVal \.{\mapsto} acceptorValue [ a ]
  ] \}}%
- \@x{\makebox[0pt][r]{\scriptsize 72\hspace{1em}}\@s{100.81} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 76\hspace{1em}}\@s{100.81} \.{\land}
  {\UNCHANGED} {\langle} ops ,\, acceptorValTS ,\, acceptorValue ,\, history
  {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}} Accept ( ts ) \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 78\hspace{1em}} Accept ( ts ) \.{\defeq}
  \.{\land} \{ m . acceptor \.{:} m \.{\in} SelectMessages (\@w{promise} ,\,
  ts ) \} \.{\in} Quorums}%
- \@x{\makebox[0pt][r]{\scriptsize 75\hspace{1em}}\@s{63.98} \.{\land} ops [ ts
+ \@x{\makebox[0pt][r]{\scriptsize 79\hspace{1em}}\@s{63.98} \.{\land} ops [ ts
  ] . oldVal \.{=} PromisedValue ( ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 76\hspace{1em}}\@s{63.98} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 80\hspace{1em}}\@s{63.98} \.{\land} msgs
  \.{'} \.{=} msgs \.{\cup} [ type \.{:} \{\@w{accept} \} ,\, acceptor \.{:}
  Acceptors ,\, ts \.{:} \{ ts \} ,\, val \.{:} \{ ops [ ts ] . newVal \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 77\hspace{1em}}\@s{63.98} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 81\hspace{1em}}\@s{63.98} \.{\land}
  {\UNCHANGED} {\langle} ops ,\, acceptorTS ,\, acceptorValTS ,\,
  acceptorValue ,\, history {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 79\hspace{1em}} RecvAccept ( a ,\, ts ,\, v
+ \@x{\makebox[0pt][r]{\scriptsize 83\hspace{1em}} RecvAccept ( a ,\, ts ,\, v
  ) \.{\defeq} \.{\land} acceptorTS [ a ] \.{=} ts}%
- \@x{\makebox[0pt][r]{\scriptsize 80\hspace{1em}}\@s{107.82} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 84\hspace{1em}}\@s{107.82} \.{\land}
  acceptorValTS \.{'} \.{=} [ acceptorValTS {\EXCEPT} {\bang} [ a ] \.{=} ts
  ]}%
- \@x{\makebox[0pt][r]{\scriptsize 81\hspace{1em}}\@s{107.82} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 85\hspace{1em}}\@s{107.82} \.{\land}
  acceptorValue \.{'}\@s{3.25} \.{=} [ acceptorValue {\EXCEPT} {\bang} [ a
  ]\@s{3.25} \.{=} v ]}%
- \@x{\makebox[0pt][r]{\scriptsize 82\hspace{1em}}\@s{107.82} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 86\hspace{1em}}\@s{107.82} \.{\land} msgs
  \.{'} \.{=} msgs \.{\cup} [ type \.{:} \{\@w{accepted} \} ,\, acceptor \.{:}
  \{ a \} ,\, ts \.{:} \{ ts \} ,\, val \.{:} \{ v \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 83\hspace{1em}}\@s{107.82} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 87\hspace{1em}}\@s{107.82} \.{\land}
  {\UNCHANGED} {\langle} ops ,\, acceptorTS ,\, history {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 85\hspace{1em}} Accepted ( ts ) \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 89\hspace{1em}} Accepted ( ts ) \.{\defeq}
  \.{\land} \{ m . acceptor \.{:} m \.{\in} SelectMessages (\@w{accepted} ,\,
  ts ) \} \.{\in} Quorums}%
- \@x{\makebox[0pt][r]{\scriptsize 86\hspace{1em}}\@s{73.26} \.{\land} \{ hpos
+ \@x{\makebox[0pt][r]{\scriptsize 90\hspace{1em}}\@s{73.26} \.{\land} \{ hpos
  \.{\in} {\DOMAIN} history \.{:} history [ hpos ] \.{=} [ type
  \.{\mapsto}\@w{response} ,\, ts \.{\mapsto} ts ] \} \.{=} \{ \}}%
- \@x{\makebox[0pt][r]{\scriptsize 87\hspace{1em}}\@s{73.26} \.{\land} history
+ \@x{\makebox[0pt][r]{\scriptsize 91\hspace{1em}}\@s{73.26} \.{\land} history
  \.{'} \.{=} Append ( history ,\, [ type \.{\mapsto}\@w{response} ,\, ts
  \.{\mapsto} ts ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 88\hspace{1em}}\@s{73.26} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 92\hspace{1em}}\@s{73.26} \.{\land}
  {\UNCHANGED} {\langle} msgs ,\, ops ,\, acceptorTS ,\, acceptorValTS ,\,
  acceptorValue {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 90\hspace{1em}} Next \.{\defeq} \.{\lor}
+ \@x{\makebox[0pt][r]{\scriptsize 94\hspace{1em}} Next \.{\defeq} \.{\lor}
  \E\, ts \.{\in} Timestamps \.{:} \.{\lor} Prepare ( ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 91\hspace{1em}}\@s{141.78} \.{\lor} Accept (
+ \@x{\makebox[0pt][r]{\scriptsize 95\hspace{1em}}\@s{141.78} \.{\lor} Accept (
  ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 92\hspace{1em}}\@s{141.78} \.{\lor} Accepted
+ \@x{\makebox[0pt][r]{\scriptsize 96\hspace{1em}}\@s{141.78} \.{\lor} Accepted
  ( ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 93\hspace{1em}}\@s{39.83} \.{\lor} \E\, m
+ \@x{\makebox[0pt][r]{\scriptsize 97\hspace{1em}}\@s{39.83} \.{\lor} \E\, m
  \.{\in} msgs \.{:} \.{\lor} m . type \.{=}\@w{prepare} \.{\land} RecvPrepare
  ( m . acceptor ,\, m . ts )}%
- \@x{\makebox[0pt][r]{\scriptsize 94\hspace{1em}}\@s{110.55} \.{\lor} m . type
+ \@x{\makebox[0pt][r]{\scriptsize 98\hspace{1em}}\@s{110.55} \.{\lor} m . type
  \.{=}\@w{accept} \.{\land} RecvAccept ( m . acceptor ,\, m . ts ,\, m . val
  )}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 96\hspace{1em}} Spec\@s{1.46} \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 100\hspace{1em}} Spec\@s{1.46} \.{\defeq}
  Init \.{\land} {\Box} [ Next ]_{ {\langle} msgs ,\, ops ,\, acceptorTS ,\,
  acceptorValTS ,\, acceptorValue ,\, history {\rangle}}}%
-\@x{\makebox[0pt][r]{\scriptsize 97\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 98\hspace{1em}} FiniteSeq ( S ) \.{\defeq}
+\@x{\makebox[0pt][r]{\scriptsize 101\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 102\hspace{1em}} FiniteSeq ( S ) \.{\defeq}
  {\UNION} \{ [ 1 \.{\dotdot} n \.{\rightarrow} S ] \.{:} n \.{\in} 1
  \.{\dotdot} Cardinality ( S ) \}}%
- \@x{\makebox[0pt][r]{\scriptsize 99\hspace{1em}} SeqAsSet ( S ) \.{\defeq} \{
- S [ i ] \.{:} i \.{\in} {\DOMAIN} S \}}%
+ \@x{\makebox[0pt][r]{\scriptsize 103\hspace{1em}} SeqAsSet ( S ) \.{\defeq}
+ \{ S [ i ] \.{:} i \.{\in} {\DOMAIN} S \}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 101\hspace{1em}} HistoryIsLinearizable
+ \@x{\makebox[0pt][r]{\scriptsize 105\hspace{1em}} HistoryIsLinearizable
  \.{\defeq} \E\, order \.{\in} \{ {\langle} {\rangle} \} \.{\cup} FiniteSeq (
  Timestamps ) \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 102\hspace{1em}}\@s{16.4} \.{\land} \A\, H
+ \@x{\makebox[0pt][r]{\scriptsize 106\hspace{1em}}\@s{16.4} \.{\land} \A\, H
  \.{\in} SeqAsSet ( history ) \.{:} H . type \.{=}\@w{response} \.{\implies}
  H . ts \.{\in} SeqAsSet ( order )}%
- \@x{\makebox[0pt][r]{\scriptsize 103\hspace{1em}}\@s{16.4} \.{\land} \A\,
+ \@x{\makebox[0pt][r]{\scriptsize 107\hspace{1em}}\@s{16.4} \.{\land} \A\,
  H1\_i ,\, H2\_i \.{\in} {\DOMAIN} history \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 104\hspace{1em}}\@s{31.61} ( history [ H1\_i
+ \@x{\makebox[0pt][r]{\scriptsize 108\hspace{1em}}\@s{31.61} ( history [ H1\_i
  ] . type \.{=}\@w{response} \.{\land} history [ H2\_i ] . type
  \.{=}\@w{invoke} \.{\land} H1\_i \.{<} H2\_i ) \.{\implies}}%
-\@x{\makebox[0pt][r]{\scriptsize 105\hspace{1em}}\@s{47.79} (}%
- \@x{\makebox[0pt][r]{\scriptsize 106\hspace{1em}}\@s{64.19} history [ H2\_i ]
+\@x{\makebox[0pt][r]{\scriptsize 109\hspace{1em}}\@s{47.79} (}%
+ \@x{\makebox[0pt][r]{\scriptsize 110\hspace{1em}}\@s{64.19} history [ H2\_i ]
  . ts \.{\in} SeqAsSet ( order ) \.{\implies}}%
- \@x{\makebox[0pt][r]{\scriptsize 107\hspace{1em}}\@s{80.59} \E\, i1 ,\, i2
+ \@x{\makebox[0pt][r]{\scriptsize 111\hspace{1em}}\@s{80.59} \E\, i1 ,\, i2
  \.{\in} {\DOMAIN} order \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 108\hspace{1em}}\@s{91.92} \.{\land} order [
+ \@x{\makebox[0pt][r]{\scriptsize 112\hspace{1em}}\@s{91.92} \.{\land} order [
  i1 ] \.{=} history [ H1\_i ] . ts}%
- \@x{\makebox[0pt][r]{\scriptsize 109\hspace{1em}}\@s{91.92} \.{\land} order [
+ \@x{\makebox[0pt][r]{\scriptsize 113\hspace{1em}}\@s{91.92} \.{\land} order [
  i2 ] \.{=} history [ H2\_i ] . ts}%
- \@x{\makebox[0pt][r]{\scriptsize 110\hspace{1em}}\@s{91.92} \.{\land} i1
+ \@x{\makebox[0pt][r]{\scriptsize 114\hspace{1em}}\@s{91.92} \.{\land} i1
  \.{<} i2}%
-\@x{\makebox[0pt][r]{\scriptsize 111\hspace{1em}}\@s{47.79} )}%
- \@x{\makebox[0pt][r]{\scriptsize 112\hspace{1em}}\@s{16.4} \.{\land} \A\, i1
+\@x{\makebox[0pt][r]{\scriptsize 115\hspace{1em}}\@s{47.79} )}%
+ \@x{\makebox[0pt][r]{\scriptsize 116\hspace{1em}}\@s{16.4} \.{\land} \A\, i1
  ,\, i2 \.{\in} {\DOMAIN} order \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 113\hspace{1em}}\@s{31.61} i2 \.{=} i1 \.{+}
+ \@x{\makebox[0pt][r]{\scriptsize 117\hspace{1em}}\@s{31.61} i2 \.{=} i1 \.{+}
  1 \.{\implies} ops [ order [ i1 ] ] . newVal \.{=} ops [ order [ i2 ] ] .
  oldVal}%
- \@x{\makebox[0pt][r]{\scriptsize 114\hspace{1em}}\@s{16.4} \.{\land} order
+ \@x{\makebox[0pt][r]{\scriptsize 118\hspace{1em}}\@s{16.4} \.{\land} order
  \.{\neq} {\langle} {\rangle} \.{\implies} InitVal \.{=} ops [ order [ 1 ] ]
  . oldVal}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 116\hspace{1em}} Inv \.{\defeq} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 120\hspace{1em}} Inv \.{\defeq} \.{\land}
  TypeOK}%
- \@x{\makebox[0pt][r]{\scriptsize 117\hspace{1em}}\@s{34.04} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 121\hspace{1em}}\@s{34.04} \.{\land}
  HistoryIsLinearizable}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 119\hspace{1em}}}\bottombar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 123\hspace{1em}}}\bottombar\@xx{}%
 \end{document}

@@ -8,6 +8,8 @@ Please go to https://arxiv.org/abs/1802.07000 for the paper.
 This spec is adapted from that of Paxos consensus algorithm by Leslie Lamport,
 which can be found at https://github.com/tlaplus/Examples/blob/master/specifications/PaxosHowToWinATuringAward/Paxos.tla.
 
+Search "<<+>>" for the code added for CASPaxos.
+
 TODO: It refines the spec in module Voting.                             
 *)
 EXTENDS Integers
@@ -25,11 +27,9 @@ ASSUME  /\ \A Q \in Quorum : Q \subseteq Acceptor
 Ballot ==  Nat
 
 (*
-Added for CASPaxos.
-
-The set of all possible CAS operations.
+<<+>> The set of all possible CAS operations.
 The CAS operations with cmpVal = None are initialization operations.
-We do not allow the new value (swapVal) to be None.
+We assume that the new values (i.e., swapVal) are not None.
 *)
 CASOperation == [cmpVal : Value \cup {None}, swapVal : Value]
 
@@ -39,23 +39,16 @@ Message == \* the set of all possible messages that can be sent in the algorithm
         mbal : Ballot \cup {-1}, mval : Value \cup {None}]
   \cup [type : {"2a"}, bal : Ballot, val : Value]
   \cup [type : {"2b"}, acc : Acceptor, bal : Ballot, val : Value]
+  \cup [type : {"response"}, bal : Ballot]  \* <<+>> the messages sent to the user
 -----------------------------------------------------------------------------
-(***************************************************************************)
-(*    maxBal - Is the same as the variable of that name in the Voting      *)
-(*             algorithm.                                                  *)
-(*    maxVBal                                                              *)
-(*    maxVVal - As in the Voting algorithm, a vote is a <<ballot, value>>   *)
-(*             pair.  The pair <<maxVBal[a], maxVVal[a]>> is the vote with  *)
-(*             the largest ballot number cast by acceptor a .  It equals   *)
-(*             <<-1, None>> if  a has not cast any vote.                   *)
-(***************************************************************************)
 VARIABLES
-    maxBal,  \*
-    maxVBal, \*
-    maxVVal, \*
+    \* maxBal[a]: the last ballot the acceptor a \in Acceptor has voted for
+    maxBal,
+    \* <<maxVBal[a], maxVVal[a]>> is the vote with the largest ballot cast by acceptor a \in Acceptor.
+    \* It equals <<-1, None>> if a \in Acceptor has not cast any vote.
+    maxVBal, maxVVal, 
     msgs,    \* the set of all messages that have been sent
-    ops      \* ops[b \in Ballot]: the CAS operation to be proposed at ballot b
-             \* added for CASPaxos
+    ops      \* <<+>> ops[b]: the CAS operation to be proposed at ballot b \in Ballot
 
 vars == <<maxBal, maxVBal, maxVVal, msgs, ops>>
 ----------------------------------------------------------------------------
@@ -63,21 +56,17 @@ TypeOK == /\ maxBal  \in [Acceptor -> Ballot \cup {-1}]
           /\ maxVBal \in [Acceptor -> Ballot \cup {-1}]
           /\ maxVVal \in [Acceptor -> Value \cup {None}]
           /\ msgs \subseteq Message
-          /\ ops \in [Ballot -> CASOperation]
+          /\ ops \in [Ballot -> CASOperation] \* <<+>>
 ----------------------------------------------------------------------------
 Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxVBal = [a \in Acceptor |-> -1]
         /\ maxVVal = [a \in Acceptor |-> None]
         /\ msgs = {}
-        \* ops remains unchanged; we utilize TLC to explore all possible CAS operations.
+        \* <<+>> ops remains unchanged; we utilize TLC to explore all possible CAS operations.
         /\ ops \in [Ballot -> CASOperation]
 ----------------------------------------------------------------------------
 Send(m) == msgs' = msgs \cup {m}
 ----------------------------------------------------------------------------
-(*
-TODO: define the CAS(cmpVal, swapVal) interface
-*)
-
 (*
 The leader of ballot b \in Ballot sends a Phase1a message.
 *)
@@ -116,13 +105,13 @@ Phase2a(b, v) ==
                                  /\ m.bal = b}
             Q1bv == {m \in Q1b : m.mbal >= 0}
         IN  /\ \A a \in Q : \E m \in Q1b : m.acc = a 
-            /\ \/ /\ Q1bv = {}  \* CAS(None, v) as an initialization operation
-                  /\ ops[b].cmpVal = None  \* added for CASPaxos
-               \/ \E m \in Q1bv :  \* CAS(v, ops[b].swapVal) as an atomic compare-and-swap operation
+            /\ \/ /\ Q1bv = {}  \* <<+>> CAS(None, v) as an initialization operation
+                  /\ ops[b].cmpVal = None  \* <<+>>
+               \/ \E m \in Q1bv :  \* <<+>> CAS(v, ops[b].swapVal) as an atomic compare-and-swap operation
                     /\ m.mval = v
                     /\ \A mm \in Q1bv : m.mbal >= mm.mbal 
-                    /\ ops[b].cmpVal = v  \* added for CASPaxos
-  /\ Send([type |-> "2a", bal |-> b, val |-> ops[b].swapVal])  \* modified for CASPaxos: val |-> ops[b].swapVal
+                    /\ ops[b].cmpVal = v  \* <<+>>
+  /\ Send([type |-> "2a", bal |-> b, val |-> ops[b].swapVal])  \* <<+>> val |-> ops[b].swapVal
   /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
 (*
 The Phase2b(a) action describes what a \in Acceptor does
@@ -145,15 +134,21 @@ Phase2b(a) ==
         /\ Send([type |-> "2b", acc |-> a, bal |-> m.bal, val |-> m.val]) 
   /\ UNCHANGED <<ops>>
 (*
-The leader of ballot b \in Ballot responds to the user.
-
-TODO: to finish it
+<<+>> The leader of ballot b \in Ballot responds to the user.
 *)
-Respond(b) == FALSE
+Respond(b) ==
+  /\ ~ \E m \in msgs : m.type = "response" /\ m.bal = b
+  /\ \E Q \in Quorum :
+        LET Q2b == {m \in msgs : /\ m.type = "2b"
+                                 /\ m.acc \in Q
+                                 /\ m.bal = b}
+        IN  \A a \in Q : \E m \in Q2b : m.acc = a 
+  /\ Send([type |-> "response", bal |-> b])
+  /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
 ----------------------------------------------------------------------------
 Next == \/ \E b \in Ballot : \/ Phase1a(b)
                              \/ \E v \in Value : Phase2a(b, v)
-                             \/ Respond(b)
+                             \/ Respond(b) \* <<+>>
         \/ \E a \in Acceptor : \/ Phase1b(a)
                                \/ Phase2b(a)
 
