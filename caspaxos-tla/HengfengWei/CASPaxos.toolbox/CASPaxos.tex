@@ -944,99 +944,89 @@
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
 This is a high-level specification of the \ensuremath{CASPaxos} algorithm
- from the paper ``'' by.
+ from the paper ``\ensuremath{CASPaxos}: Replicated State Machines without
+ Logs'' by \ensuremath{Denis} \ensuremath{Rystsov}.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+ Please go to https:\ensuremath{\.{\slsl}arxiv.org}/abs/1802.07000 for the
+ paper.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+ This spec is adapted from that of \ensuremath{Paxos} consensus algorithm by
+ \ensuremath{Leslie} \ensuremath{Lamport},
+ which can be found at
+ https:\ensuremath{\.{\slsl}github.com}/tlaplus/Examples/blob/master/specifications/\ensuremath{PaxosHowToWinATuringAward}/\ensuremath{Paxos.tla}.
 \end{cpar}%
 \vshade{5.0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
 \ensuremath{TODO}: It refines the spec in module Voting.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 8\hspace{1em}}}\midbar\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 9\hspace{1em}} {\EXTENDS} Integers}%
-\@x{\makebox[0pt][r]{\scriptsize 10\hspace{1em}}}\midbar\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 11\hspace{1em}} {\CONSTANTS}}%
- \@x{\makebox[0pt][r]{\scriptsize 12\hspace{1em}}\@s{16.4} Value
+\@x{\makebox[0pt][r]{\scriptsize 13\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 14\hspace{1em}} {\EXTENDS} Integers}%
+\@x{\makebox[0pt][r]{\scriptsize 15\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}} {\CONSTANTS}}%
+ \@x{\makebox[0pt][r]{\scriptsize 17\hspace{1em}}\@s{16.4} Value
  ,\,\@s{21.68}}%
 \@y{\@s{0}%
  the set of values to be proposed and chosen from
 }%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 13\hspace{1em}}\@s{16.4} Acceptor
+ \@x{\makebox[0pt][r]{\scriptsize 18\hspace{1em}}\@s{16.4} Acceptor
  ,\,\@s{8.2}}%
 \@y{\@s{0}%
  the set acceptors
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 14\hspace{1em}}\@s{16.4} Quorum\@s{16.17}}%
+\@x{\makebox[0pt][r]{\scriptsize 19\hspace{1em}}\@s{16.4} Quorum\@s{16.17}}%
 \@y{\@s{0}%
  the quorum system on acceptors
 }%
 \@xx{}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 16\hspace{1em}} None \.{\defeq} {\CHOOSE} v
+ \@x{\makebox[0pt][r]{\scriptsize 21\hspace{1em}} None \.{\defeq} {\CHOOSE} v
  \.{:} v \.{\notin} Value}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 18\hspace{1em}} {\ASSUME}\@s{4.1} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 23\hspace{1em}} {\ASSUME}\@s{4.1} \.{\land}
  \A\, Q \.{\in} Quorum \.{:} Q \.{\subseteq} Acceptor}%
- \@x{\makebox[0pt][r]{\scriptsize 19\hspace{1em}}\@s{42.34} \.{\land} \A\, Q1
+ \@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}}\@s{42.34} \.{\land} \A\, Q1
  ,\, Q2 \.{\in} Quorum \.{:} Q1 \.{\cap} Q2 \.{\neq} \{ \}}%
-\@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 21\hspace{1em}} Ballot \.{\defeq}\@s{4.1}
+\@x{\makebox[0pt][r]{\scriptsize 25\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 26\hspace{1em}} Ballot \.{\defeq}\@s{4.1}
  Nat}%
+\@pvspace{8.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
- We now define \ensuremath{Message} to be the set of all possible messages
- that can
- be sent in the algorithm. In TLA+, the expression
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-(1) [\ensuremath{type \.{\mapsto} \@w{1a}}, \ensuremath{bal \.{\mapsto} b}]
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- is a record \ensuremath{r} with two components, a \ensuremath{type}
- component, \ensuremath{r.type}, that
- equals \ensuremath{\@w{1a}} and whose \ensuremath{bal} component,
- \ensuremath{r.bal}, that equals \ensuremath{b}. The
- expression
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-(2) [type : \ensuremath{\{\@w{1a}\}}, \ensuremath{bal} : \ensuremath{Ballot}]
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- is the set of all records \ensuremath{r} with a components \ensuremath{type}
- and \ensuremath{bal} such that
- \ensuremath{r.type} is an element of \ensuremath{\{\@w{1a}\}} and
- \ensuremath{r.bal} is an element of \ensuremath{Ballot}.
- Since \ensuremath{\@w{1a}} is the only element of \ensuremath{\{\@w{1a}\}},
- formula (2) is the set of all
- elements (1) such that \ensuremath{b \.{\in} Ballot}.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- The function of each type of message in the set \ensuremath{Message} is
- explained
- below with the action that can send it.
+The set of all possible \ensuremath{CAS} operations.
+ The \ensuremath{CAS} operations with \ensuremath{cmpVal \.{=} None} are
+ initialization operations.
+ We do not allow the new value (\ensuremath{swapVal}) to be \ensuremath{None}.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}} Message \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 43\hspace{1em}}\@s{28.7} [ type\@s{2.83}
+ \@x{\makebox[0pt][r]{\scriptsize 33\hspace{1em}} CASOperation \.{\defeq} [
+ cmpVal \.{:} Value \.{\cup} \{ None \} ,\, swapVal \.{:} Value ]}%
+\@pvspace{8.0pt}%
+\@x{\makebox[0pt][r]{\scriptsize 35\hspace{1em}} Message \.{\defeq}}%
+\@y{\@s{0}%
+ the set of all possible messages that can be sent in the algorithm
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 36\hspace{1em}}\@s{28.7} [ type\@s{2.83}
  \.{:} \{\@w{1a} \} ,\, bal\@s{1.93} \.{:} Ballot ]}%
- \@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
+ \@x{\makebox[0pt][r]{\scriptsize 37\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
  type\@s{2.83} \.{:} \{\@w{1b} \} ,\, acc \.{:} Acceptor ,\, bal \.{:} Ballot
  ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}}\@s{31.47} mbal \.{:} Ballot
+ \@x{\makebox[0pt][r]{\scriptsize 38\hspace{1em}}\@s{31.47} mbal \.{:} Ballot
  \.{\cup} \{ \.{-} 1 \} ,\, mval \.{:} Value \.{\cup} \{ None \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
+ \@x{\makebox[0pt][r]{\scriptsize 39\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
  type\@s{2.83} \.{:} \{\@w{2a} \} ,\, bal\@s{1.93} \.{:} Ballot ,\, val \.{:}
  Value ]}%
- \@x{\makebox[0pt][r]{\scriptsize 47\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
+ \@x{\makebox[0pt][r]{\scriptsize 40\hspace{1em}}\@s{8.2} \.{\cup}\@s{9.38} [
  type\@s{2.83} \.{:} \{\@w{2b} \} ,\, acc \.{:} Acceptor ,\, bal \.{:} Ballot
  ,\, val \.{:} Value ]}%
-\@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}}}\midbar\@xx{}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{T}{T}{0}{2.5}{%
 \ensuremath{maxBal \.{-}}}%
@@ -1056,85 +1046,81 @@ Is the same as the variable of that name in the Voting
  \ensuremath{{\langle}\.{-}1,\, None{\rangle}} if a has not cast any vote.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}} {\VARIABLES}}%
- \@x{\makebox[0pt][r]{\scriptsize 59\hspace{1em}}\@s{16.4} maxBal
+\@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}} {\VARIABLES}}%
+ \@x{\makebox[0pt][r]{\scriptsize 52\hspace{1em}}\@s{16.4} maxBal
  ,\,\@s{7.43}}%
 \@y{}%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}}\@s{16.4} maxVBal ,\,}%
+\@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}}\@s{16.4} maxVBal ,\,}%
 \@y{}%
 \@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 61\hspace{1em}}\@s{16.4} maxVVal
+ \@x{\makebox[0pt][r]{\scriptsize 54\hspace{1em}}\@s{16.4} maxVVal
  ,\,\@s{0.37}}%
 \@y{}%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}}\@s{16.4} msgs ,\,\@s{19.32}}%
+\@x{\makebox[0pt][r]{\scriptsize 55\hspace{1em}}\@s{16.4} msgs ,\,\@s{19.32}}%
 \@y{\@s{0}%
  the set of all messages that have been sent
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}}\@s{16.4} cas\@s{33.10}}%
+\@x{\makebox[0pt][r]{\scriptsize 56\hspace{1em}}\@s{16.4} ops\@s{32.07}}%
 \@y{\@s{0}%
- \ensuremath{cas[b \.{\in} Ballot]}: [\ensuremath{cmpVal} : \ensuremath{Value
- \.{\cup} \{None\}}, \ensuremath{swapVal} : \ensuremath{Value \.{\cup}
- \{None\}{\rangle} \.{\,\backslash\,}}* \ensuremath{TODO
+ \ensuremath{ops[b \.{\in} Ballot]}: the \ensuremath{CAS} operation to be
+ proposed at ballot \ensuremath{b
 }}%
 \@xx{}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}} vars \.{\defeq} {\langle}
- maxBal ,\, maxVBal ,\, maxVVal ,\, msgs ,\, cas {\rangle}}%
-\@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 67\hspace{1em}} TypeOK \.{\defeq} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 58\hspace{1em}} vars \.{\defeq} {\langle}
+ maxBal ,\, maxVBal ,\, maxVVal ,\, msgs ,\, ops {\rangle}}%
+\@x{\makebox[0pt][r]{\scriptsize 59\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 60\hspace{1em}} TypeOK \.{\defeq} \.{\land}
  maxBal\@s{7.43} \.{\in} [ Acceptor \.{\rightarrow} Ballot \.{\cup} \{ \.{-}
  1 \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}}\@s{56.14} \.{\land} maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 61\hspace{1em}}\@s{56.14} \.{\land} maxVBal
  \.{\in} [ Acceptor \.{\rightarrow} Ballot \.{\cup} \{ \.{-} 1 \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}\@s{56.14} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 62\hspace{1em}}\@s{56.14} \.{\land}
  maxVVal\@s{0.37} \.{\in} [ Acceptor \.{\rightarrow} Value \.{\cup} \{ None
  \} ]}%
- \@x{\makebox[0pt][r]{\scriptsize 70\hspace{1em}}\@s{56.14} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 63\hspace{1em}}\@s{56.14} \.{\land} msgs
  \.{\subseteq} Message}%
- \@x{\makebox[0pt][r]{\scriptsize 71\hspace{1em}}\@s{56.14} \.{\land} cas
- \.{\in} [ Ballot \.{\rightarrow} [ cmpVal\@s{0.28} \.{:} Value \.{\cup} \{
- None \} ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 72\hspace{1em}}\@s{140.18} swapVal \.{:}
- Value \.{\cup} \{ None \} ] ]}%
-\@x{\makebox[0pt][r]{\scriptsize 73\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}} Init \.{\defeq} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 64\hspace{1em}}\@s{56.14} \.{\land} ops
+ \.{\in} [ Ballot \.{\rightarrow} CASOperation ]}%
+\@x{\makebox[0pt][r]{\scriptsize 65\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 66\hspace{1em}} Init \.{\defeq} \.{\land}
  maxBal\@s{7.43} \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
- \@x{\makebox[0pt][r]{\scriptsize 75\hspace{1em}}\@s{35.70} \.{\land} maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 67\hspace{1em}}\@s{35.70} \.{\land} maxVBal
  \.{=} [ a \.{\in} Acceptor \.{\mapsto} \.{-} 1 ]}%
- \@x{\makebox[0pt][r]{\scriptsize 76\hspace{1em}}\@s{35.70} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 68\hspace{1em}}\@s{35.70} \.{\land}
  maxVVal\@s{0.37} \.{=} [ a \.{\in} Acceptor \.{\mapsto} None ]}%
- \@x{\makebox[0pt][r]{\scriptsize 77\hspace{1em}}\@s{35.70} \.{\land} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 69\hspace{1em}}\@s{35.70} \.{\land} msgs
  \.{=} \{ \}}%
- \@x{\makebox[0pt][r]{\scriptsize 78\hspace{1em}}\@s{35.70} \.{\land} cas
- \.{=} [ b \.{\in} Ballot \.{\mapsto} [ cmpVal \.{\mapsto} None ,\, swapVal
- \.{\mapsto} None ] ]\@s{8.2}}%
+\@x{\makebox[0pt][r]{\scriptsize 70\hspace{1em}}\@s{35.70}}%
 \@y{\@s{0}%
- \ensuremath{TODO}:
+ \ensuremath{ops} remains unchanged; we utilize \ensuremath{TLC} to explore
+ all possible \ensuremath{CAS} operations.
 }%
 \@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 79\hspace{1em}}}\midbar\@xx{}%
- \@x{\makebox[0pt][r]{\scriptsize 80\hspace{1em}} Send ( m ) \.{\defeq} msgs
+ \@x{\makebox[0pt][r]{\scriptsize 71\hspace{1em}}\@s{35.70} \.{\land} ops
+ \.{\in} [ Ballot \.{\rightarrow} CASOperation ]}%
+\@x{\makebox[0pt][r]{\scriptsize 72\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 73\hspace{1em}} Send ( m ) \.{\defeq} msgs
  \.{'} \.{=} msgs \.{\cup} \{ m \}}%
-\@x{\makebox[0pt][r]{\scriptsize 81\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 74\hspace{1em}}}\midbar\@xx{}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
- The leader of ballot \ensuremath{b \.{\in} Ballot} issues an
- \ensuremath{CAS(cmpVal,\, swapVal)} operation
- by sending a \ensuremath{Phase1a} message.
+\ensuremath{TODO}: define the \ensuremath{CAS(cmpVal,\, swapVal)} interface
+\end{cpar}%
+\vshade{15.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+ The leader of ballot \ensuremath{b \.{\in} Ballot} sends a
+ \ensuremath{Phase1a} message.
 \end{cpar}%
 \end{lcom}%
- \@x{\makebox[0pt][r]{\scriptsize 86\hspace{1em}} Phase1a ( b ,\, cmpVal ,\,
- swapVal ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 87\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
+\@x{\makebox[0pt][r]{\scriptsize 82\hspace{1em}} Phase1a ( b ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 83\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
  Send ( [ type \.{\mapsto}\@w{1a} ,\, bal \.{\mapsto} b ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 88\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
- cas \.{'} \.{=} [ cas {\EXCEPT} {\bang} [ b ] \.{=} [ cmpVal \.{\mapsto}
- cmpVal ,\, swapVal \.{\mapsto} swapVal ] ]}%
- \@x{\makebox[0pt][r]{\scriptsize 89\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
- {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal {\rangle}}%
+ \@x{\makebox[0pt][r]{\scriptsize 84\hspace{1em}}\@s{16.4} \.{\land}\@s{9.81}
+ {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
  The acceptor \ensuremath{a \.{\in} Acceptor} receives a \ensuremath{Phase1a}
@@ -1143,277 +1129,157 @@ Is the same as the variable of that name in the Voting
 \end{cpar}%
 \vshade{5.0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
- \ensuremath{TODO}: This action implements the
- \ensuremath{IncreaseMaxBal(a,\,b)} action of the Voting algorithm
- for \ensuremath{b \.{=} m.bal}.
+For refinement:
+ This action implements the \ensuremath{IncreaseMaxBal(a,\,b)} action of the
+ Voting algorithm for \ensuremath{b \.{=} m.bal}.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 97\hspace{1em}} Phase1b ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 98\hspace{1em}}\@s{8.2} \.{\land} \E\, m
+\@x{\makebox[0pt][r]{\scriptsize 92\hspace{1em}} Phase1b ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 93\hspace{1em}}\@s{8.2} \.{\land} \E\, m
  \.{\in} msgs \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 99\hspace{1em}}\@s{26.53} \.{\land} m . type
+ \@x{\makebox[0pt][r]{\scriptsize 94\hspace{1em}}\@s{26.53} \.{\land} m . type
  \.{=}\@w{1a}}%
- \@x{\makebox[0pt][r]{\scriptsize 100\hspace{1em}}\@s{26.53} \.{\land} m . bal
+ \@x{\makebox[0pt][r]{\scriptsize 95\hspace{1em}}\@s{26.53} \.{\land} m . bal
  \.{>} maxBal [ a ]}%
- \@x{\makebox[0pt][r]{\scriptsize 101\hspace{1em}}\@s{26.53} \.{\land} maxBal
+ \@x{\makebox[0pt][r]{\scriptsize 96\hspace{1em}}\@s{26.53} \.{\land} maxBal
  \.{'} \.{=} [ maxBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 102\hspace{1em}}\@s{26.53} \.{\land} Send (
- [ type\@s{2.83} \.{\mapsto}\@w{1b} ,\, acc \.{\mapsto} a ,\, bal \.{\mapsto}
- m . bal ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 103\hspace{1em}}\@s{66.29} mbal \.{\mapsto}
+ \@x{\makebox[0pt][r]{\scriptsize 97\hspace{1em}}\@s{26.53} \.{\land} Send ( [
+ type\@s{2.83} \.{\mapsto}\@w{1b} ,\, acc \.{\mapsto} a ,\, bal \.{\mapsto} m
+ . bal ,\,}%
+ \@x{\makebox[0pt][r]{\scriptsize 98\hspace{1em}}\@s{66.29} mbal \.{\mapsto}
  maxVBal [ a ] ,\, mval \.{\mapsto} maxVVal [ a ] ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 104\hspace{1em}}\@s{8.2} \.{\land}
- {\UNCHANGED} {\langle} maxVBal ,\, maxVVal ,\, cas {\rangle}}%
+ \@x{\makebox[0pt][r]{\scriptsize 99\hspace{1em}}\@s{8.2} \.{\land}
+ {\UNCHANGED} {\langle} maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
  In the \ensuremath{Phase2a(b,\, v)} action, the ballot \ensuremath{b} leader
- sends a type \ensuremath{\@w{2a}
- } message asking the acceptors to vote for \ensuremath{v} in ballot number
- \ensuremath{b}. The
- enabling conditions of the action--its first two conjuncts--ensure that
- three of the four enabling conditions of action \ensuremath{VoteFor(a,\,
- b,\, v)} in
+ sends a type \ensuremath{\@w{2a}} message
+ asking the acceptors to vote for some value computed based on \ensuremath{v}
+ in ballot number \ensuremath{b}.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+For refinement:
+ the enabling conditions of the action--its first two conjuncts--ensure that
+ the second through fourth conjuncts of the four enabling conditions of
+ action \ensuremath{VoteFor(a,\, b,\, v)} in
  module Voting will be true when acceptor a receives that message.
- Those three enabling conditions are the second through fourth conjuncts
- of that action.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- The first conjunct of \ensuremath{Phase2a(b,\, v)} asserts that at most one
- phase \ensuremath{2a
- } message is ever sent for ballot \ensuremath{b}. Since an acceptor will vote
- for a
- value in ballot \ensuremath{b} only when it receives the appropriate phase
- \ensuremath{2a
- } message, the phase \ensuremath{2a} message sent by this action this ensures
- that
- these two enabling conjuncts of \ensuremath{VoteFor(a,\,b,\,v)} will be true
- forever:
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{T}{F}{10.0}{0}{}%
-\ensuremath{\.{\land} \A\, vt \.{\in} votes[a]} : \ensuremath{vt[1] \.{\neq} b
-}%
-\end{cpar}%
-\begin{cpar}{0}{T}{F}{0}{12.5}{}%
-\ensuremath{\.{\land} \A\, c \.{\in} Acceptor \.{\,\backslash\,} \{a\}} :
- \ensuremath{\A\, vt \.{\in} votes[c]} : (\ensuremath{vt[1] \.{=} b})
- \ensuremath{\.{\implies}} (\ensuremath{vt[2] \.{=} v})
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{2}{F}{F}{0}{0}{}%
- The second conjunct of the \ensuremath{Phase2a(b,\, v)} action is the heart
- of the
- Paxos consensus algorithm. It\mbox{'}s a bit complicated, but I\mbox{'}ve
- tried a
- number of times to write it in \ensuremath{English}, and it\mbox{'}s much
- easier to
- understand when written in mathematics. The
- \ensuremath{\.{\LET}}/\ensuremath{\.{\IN}} construct locally
- defines \ensuremath{Q1} to be the set of phase \ensuremath{1b} messages sent
- in ballot number \ensuremath{b
- } by acceptors in quorum \ensuremath{Q}; and it defines \ensuremath{Q1bv} to
- be the subset of those
- messages indicating that the sender had voted in some ballot (which
- must have been numbered less than \ensuremath{b}). You should study the
- \ensuremath{\.{\IN}} clause
- to convince yourself that it equals \ensuremath{ShowsSafeAt(Q,\, b,\, v)},
- defined in
- module Voting, using the values of \ensuremath{maxBal[a]},
- \ensuremath{maxVBal[a]}, and \ensuremath{maxVVal[a]
- a} sent in its phase \ensuremath{1b} message to describe what votes it had
- cast
- when it sent that message. Moreover, since \ensuremath{a} will no longer
- cast any
- votes in ballots numbered less than \ensuremath{b}, the \ensuremath{\.{\IN}}
- clause implies that
- \ensuremath{ShowsSafeAt(Q,\, b,\, v)} is still true and will remain true
- forever.
- Hence, this conjunct of \ensuremath{Phase2a(b,\, v)} checks the enabling
- condition
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{T}{F}{7.5}{0}{}%
- \ensuremath{\.{\land} \E\, Q \.{\in} Quorum} : \ensuremath{ShowsSafeAt(Q,\,
- b,\, v)
-}%
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{1}{F}{F}{0}{0}{}%
-of module Voting\mbox{'}s \ensuremath{VoteFor(a,\, b,\, v)} action.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- The type \ensuremath{\@w{2a}} message sent by this action therefore tells
- every
- acceptor \ensuremath{a} that, when it receives the message, all the enabling
- conditions of \ensuremath{VoteFor(a,\, b,\, v)} but the first,
- \ensuremath{maxBal[a] \.{\leq} b}, are
- satisfied.
 \end{cpar}%
 \end{lcom}%
- \@x{\makebox[0pt][r]{\scriptsize 149\hspace{1em}} Phase2a ( b ,\, v )
+ \@x{\makebox[0pt][r]{\scriptsize 109\hspace{1em}} Phase2a ( b ,\, v )
  \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 150\hspace{1em}}\@s{8.2} \.{\land} {\lnot}
+ \@x{\makebox[0pt][r]{\scriptsize 110\hspace{1em}}\@s{8.2} \.{\land} {\lnot}
  \E\, m \.{\in} msgs\@s{7.89} \.{:} m . type \.{=}\@w{2a} \.{\land} m . bal
  \.{=} b}%
- \@x{\makebox[0pt][r]{\scriptsize 151\hspace{1em}}\@s{8.2} \.{\land} \E\, Q
+ \@x{\makebox[0pt][r]{\scriptsize 111\hspace{1em}}\@s{8.2} \.{\land} \E\, Q
  \.{\in} Quorum \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 152\hspace{1em}}\@s{26.53} \.{\LET} Q1b
+ \@x{\makebox[0pt][r]{\scriptsize 112\hspace{1em}}\@s{26.53} \.{\LET} Q1b
  \.{\defeq} \{ m \.{\in} msgs\@s{6.20} \.{:} \.{\land} m . type \.{=}\@w{1b}}%
- \@x{\makebox[0pt][r]{\scriptsize 153\hspace{1em}}\@s{148.25} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 113\hspace{1em}}\@s{148.25} \.{\land} m .
  acc \.{\in} Q}%
- \@x{\makebox[0pt][r]{\scriptsize 154\hspace{1em}}\@s{148.25} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 114\hspace{1em}}\@s{148.25} \.{\land} m .
  bal\@s{1.57} \.{=} b \}}%
- \@x{\makebox[0pt][r]{\scriptsize 155\hspace{1em}}\@s{51.03} Q1bv \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 115\hspace{1em}}\@s{51.03} Q1bv \.{\defeq}
  \{ m \.{\in} Q1b \.{:} m . mbal \.{\geq} 0 \}}%
- \@x{\makebox[0pt][r]{\scriptsize 156\hspace{1em}}\@s{26.53} \.{\IN}\@s{4.09}
+ \@x{\makebox[0pt][r]{\scriptsize 116\hspace{1em}}\@s{26.53} \.{\IN}\@s{4.09}
  \.{\land} \A\, a \.{\in} Q \.{:} \E\, m \.{\in} Q1b \.{:} m . acc \.{=} a}%
- \@x{\makebox[0pt][r]{\scriptsize 157\hspace{1em}}\@s{51.03} \.{\land}
- \.{\lor} Q1bv \.{=} \{ \}}%
- \@x{\makebox[0pt][r]{\scriptsize 158\hspace{1em}}\@s{62.14} \.{\lor} \E\,
- m\@s{7.71} \.{\in} Q1bv \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 159\hspace{1em}}\@s{81.45} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 117\hspace{1em}}\@s{51.03} \.{\land}
+ \.{\lor} \.{\land} Q1bv \.{=} \{ \}\@s{4.1}}%
+\@y{\@s{0}%
+ \ensuremath{CAS(None,\, v)} as an initialization operation
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 118\hspace{1em}}\@s{73.25} \.{\land} ops [ b
+ ] . cmpVal \.{=} None\@s{4.1}}%
+\@y{\@s{0}%
+ added for \ensuremath{CASPaxos
+}}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 119\hspace{1em}}\@s{62.14} \.{\lor} \E\, m
+ \.{\in} Q1bv \.{:}\@s{4.1}}%
+\@y{\@s{0}%
+ \ensuremath{CAS(v,\, ops[b].swapVal)} as an atomic compare-and-swap operation
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 120\hspace{1em}}\@s{81.45} \.{\land} m .
  mval \.{=} v}%
- \@x{\makebox[0pt][r]{\scriptsize 160\hspace{1em}}\@s{81.45} \.{\land} \A\, mm
+ \@x{\makebox[0pt][r]{\scriptsize 121\hspace{1em}}\@s{81.45} \.{\land} \A\, mm
  \.{\in} Q1bv \.{:} m . mbal \.{\geq} mm . mbal}%
- \@x{\makebox[0pt][r]{\scriptsize 161\hspace{1em}}\@s{8.2} \.{\land} Send ( [
- type \.{\mapsto}\@w{2a} ,\, bal \.{\mapsto} b ,\, val \.{\mapsto} v ] )}%
- \@x{\makebox[0pt][r]{\scriptsize 162\hspace{1em}}\@s{8.2} \.{\land}
- {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal {\rangle}}%
+ \@x{\makebox[0pt][r]{\scriptsize 122\hspace{1em}}\@s{81.45} \.{\land} ops [ b
+ ] . cmpVal \.{=} v\@s{4.1}}%
+\@y{\@s{0}%
+ added for \ensuremath{CASPaxos
+}}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 123\hspace{1em}}\@s{8.2} \.{\land} Send ( [
+ type \.{\mapsto}\@w{2a} ,\, bal \.{\mapsto} b ,\, val \.{\mapsto} ops [ b ]
+ . swapVal ] )\@s{4.1}}%
+\@y{\@s{0}%
+ modified for \ensuremath{CASPaxos}: \ensuremath{val \.{\mapsto}
+ ops[b].swapVal
+}}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 124\hspace{1em}}\@s{8.2} \.{\land}
+ {\UNCHANGED} {\langle} maxBal ,\, maxVBal ,\, maxVVal ,\, ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
- The \ensuremath{Phase2b(a)} action describes what acceptor \ensuremath{a}
- does when it receives
- a phase \ensuremath{2a} message \ensuremath{m}, which is sent by the leader
- of ballot \ensuremath{m.bal
- } asking acceptors to vote for \ensuremath{m.val} in that ballot. Acceptor
- \ensuremath{a} acts
- on that request, voting for \ensuremath{m.val} in ballot number
- \ensuremath{m.bal}, iff \ensuremath{m.bal \.{\geq}
- maxBal[a]}, which means that \ensuremath{a} has not participated in any
- ballot
- numbered greater than \ensuremath{m.bal}. Thus, this enabling condition of
- the
- \ensuremath{Phase2b(a)} action together with the receipt of the phase
- \ensuremath{2a} message \ensuremath{m
+ The \ensuremath{Phase2b(a)} action describes what \ensuremath{a \.{\in}
+ Acceptor} does
+ when it receives a phase \ensuremath{2a} message \ensuremath{m \.{\in} msgs},
+ which is sent by the leader of ballot \ensuremath{m.bal
+} asking acceptors to vote for \ensuremath{m.val} in that ballot.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+For refinement:
+ The enabling condition of the \ensuremath{Phase2b(a)} action
+ together with the receipt of the phase \ensuremath{2a} message \ensuremath{m
  } implies that the \ensuremath{VoteFor(a,\, m.bal,\, m.val)} action of module
- Voting is
- enabled and can be executed. The \ensuremath{Phase2b(a)} message updates
- \ensuremath{maxBal[a]},
- \ensuremath{maxVBal[a]}, and \ensuremath{maxVVal[a]} so their values mean
- what they were claimed
- to mean in the comments preceding the variable declarations.
+ Voting is enabled and can be executed.
 \end{cpar}%
 \end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 176\hspace{1em}} Phase2b ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 177\hspace{1em}}\@s{8.2} \E\, m \.{\in} msgs
+\@x{\makebox[0pt][r]{\scriptsize 137\hspace{1em}} Phase2b ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 138\hspace{1em}}\@s{8.2} \E\, m \.{\in} msgs
  \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 178\hspace{1em}}\@s{19.52} \.{\land} m .
+ \@x{\makebox[0pt][r]{\scriptsize 139\hspace{1em}}\@s{19.52} \.{\land} m .
  type \.{=}\@w{2a}}%
- \@x{\makebox[0pt][r]{\scriptsize 179\hspace{1em}}\@s{19.52} \.{\land} m . bal
+ \@x{\makebox[0pt][r]{\scriptsize 140\hspace{1em}}\@s{19.52} \.{\land} m . bal
  \.{\geq} maxBal [ a ]}%
- \@x{\makebox[0pt][r]{\scriptsize 180\hspace{1em}}\@s{19.52} \.{\land} maxBal
+ \@x{\makebox[0pt][r]{\scriptsize 141\hspace{1em}}\@s{19.52} \.{\land} maxBal
  \.{'} \.{=} [ maxBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 181\hspace{1em}}\@s{19.52} \.{\land} maxVBal
+ \@x{\makebox[0pt][r]{\scriptsize 142\hspace{1em}}\@s{19.52} \.{\land} maxVBal
  \.{'} \.{=} [ maxVBal {\EXCEPT} {\bang} [ a ] \.{=} m . bal ]}%
- \@x{\makebox[0pt][r]{\scriptsize 182\hspace{1em}}\@s{19.52} \.{\land} maxVVal
+ \@x{\makebox[0pt][r]{\scriptsize 143\hspace{1em}}\@s{19.52} \.{\land} maxVVal
  \.{'}\@s{0.37} \.{=} [ maxVVal {\EXCEPT} {\bang} [ a ]\@s{0.37} \.{=} m .
  val ]}%
- \@x{\makebox[0pt][r]{\scriptsize 183\hspace{1em}}\@s{19.52} \.{\land} Send (
- [ type \.{\mapsto}\@w{2b} ,\, acc \.{\mapsto} a ,\,}%
- \@x{\makebox[0pt][r]{\scriptsize 184\hspace{1em}}\@s{56.51} bal \.{\mapsto} m
- . bal ,\, val \.{\mapsto} m . val ] )}%
-\@pvspace{8.0pt}%
+ \@x{\makebox[0pt][r]{\scriptsize 144\hspace{1em}}\@s{19.52} \.{\land} Send (
+ [ type \.{\mapsto}\@w{2b} ,\, acc \.{\mapsto} a ,\, bal \.{\mapsto} m . bal
+ ,\, val \.{\mapsto} m . val ] )}%
+ \@x{\makebox[0pt][r]{\scriptsize 145\hspace{1em}}\@s{19.52} \.{\land}
+ {\UNCHANGED} {\langle} ops {\rangle}}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
- The definitions of \ensuremath{Next} and \ensuremath{Spec} are what we expect
- them to be.
+The leader of ballot \ensuremath{b \.{\in} Ballot} responds to the user.
+\end{cpar}%
+\vshade{5.0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+\ensuremath{TODO}: to finish it
 \end{cpar}%
 \end{lcom}%
- \@x{\makebox[0pt][r]{\scriptsize 189\hspace{1em}} Next \.{\defeq} \.{\lor}
+ \@x{\makebox[0pt][r]{\scriptsize 151\hspace{1em}} Respond ( b ) \.{\defeq}
+ {\FALSE}}%
+\@x{\makebox[0pt][r]{\scriptsize 152\hspace{1em}}}\midbar\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 153\hspace{1em}} Next \.{\defeq} \.{\lor}
  \E\, b\@s{0.64} \.{\in} Ballot \.{:} \.{\lor} Phase1a ( b )}%
- \@x{\makebox[0pt][r]{\scriptsize 190\hspace{1em}}\@s{112.86} \.{\lor} \E\, v
+ \@x{\makebox[0pt][r]{\scriptsize 154\hspace{1em}}\@s{112.86} \.{\lor} \E\, v
  \.{\in} Value \.{:} Phase2a ( b ,\, v )}%
- \@x{\makebox[0pt][r]{\scriptsize 191\hspace{1em}}\@s{39.83} \.{\lor} \E\, a
+ \@x{\makebox[0pt][r]{\scriptsize 155\hspace{1em}}\@s{112.86} \.{\lor} Respond
+ ( b )}%
+ \@x{\makebox[0pt][r]{\scriptsize 156\hspace{1em}}\@s{39.83} \.{\lor} \E\, a
  \.{\in} Acceptor \.{:} Phase1b ( a ) \.{\lor} Phase2b ( a )}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 193\hspace{1em}} Spec\@s{1.46} \.{\defeq}
+ \@x{\makebox[0pt][r]{\scriptsize 158\hspace{1em}} Spec\@s{1.46} \.{\defeq}
  Init \.{\land} {\Box} [ Next ]_{ vars}}%
-\@x{\makebox[0pt][r]{\scriptsize 194\hspace{1em}}}\midbar\@xx{}%
-\begin{lcom}{0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-This current module is distributed with two models, \ensuremath{TinyModel} and
- \ensuremath{SmallModel}. \ensuremath{SmallModel} is the same as the model by
- that name for the
- Voting specification. \ensuremath{TinyModel} is the same except it defines
- \ensuremath{Ballot
- } to contain only two elements. Run \ensuremath{TLC} on these models. You
- should
- find that it takes a couple of seconds to run \ensuremath{TinyModel} and two
- or
- three minutes to run \ensuremath{SmallModel}.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-Next, try the same thing you did with the Voting algorithm: Modify the
- models so the assumption that any pair of quorums has an element in
- common is no longer true. (Again, it\mbox{'}s best to modify clones of the
- models.) This time, running \ensuremath{TLC} will not find an error. The
- correctness of theorems Invariance and Implementation does not depend
- on that assumption. The \ensuremath{Paxos} consensus algorithm still
- correctly
- implements the Voting algorithm; but the Voting algorithm is incorrect
- if the assumption does not hold.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- Now go back to the original \ensuremath{SmallModel}, in which the quorum
- assumption
- holds. The sets \ensuremath{Acceptor} and \ensuremath{Value} are symmetry
- sets for the spec.
- (See the ``Model \ensuremath{Values} and Symmetry'' help page to find out
- what that
- means.) Try editing the values substituted for \ensuremath{Acceptor} and/or
- \ensuremath{Value} by
- selecting the ``Symmetry set'' option and comparing the number of
- reachable states \ensuremath{TLC} found and the time it took. (Remember to
- use
- cloned models.)
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- When you have other things to do while \ensuremath{TLC} is running, try
- increasing
- the size of the model a very little bit at a time and see how the
- running time increases. You\mbox{'}ll find that it increases exponentially
- with the numbers of acceptors, values, and ballots.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
-Fortunately, exhaustively checking a small model is very effective at
- finding errors. Since the \ensuremath{Paxos} consensus algorithm has been
- proved
- correct, and that proof has been read by many people, I\mbox{'}m sure that
- the
- basic algorithm is correct. Checking this spec on \ensuremath{SmallModel}
- makes me
- quite confident that there are no ``coding errors'' in this TLA+
- specification of the algorithm.
-\end{cpar}%
-\vshade{5.0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
- For checking safety properties, \ensuremath{TLC} can obtain close to linear
- speedup
- using dozens of processors. After designing a new distributed
- algorithm, you will have plenty of time to run \ensuremath{TLC} while the
- algorithm
- is being implemented and the implementation tested. Use that time to
- run it for as long as you can on the largest \ensuremath{machine(s)} that
- you can.
- Testing the implementation is unlikely to find subtle errors in the
- algorithm.
-\end{cpar}%
-\end{lcom}%
-\@x{\makebox[0pt][r]{\scriptsize 240\hspace{1em}}}\bottombar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 159\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 160\hspace{1em}}}\bottombar\@xx{}%
 \end{document}

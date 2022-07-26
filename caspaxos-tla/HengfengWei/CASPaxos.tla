@@ -1,7 +1,12 @@
 -------------------------------- MODULE CASPaxos -------------------------------
 (*
 This is a high-level specification of the CASPaxos algorithm
-from the paper "" by.
+from the paper "CASPaxos: Replicated State Machines without Logs" by Denis Rystsov.
+
+Please go to https://arxiv.org/abs/1802.07000 for the paper.
+
+This spec is adapted from that of Paxos consensus algorithm by Leslie Lamport,
+which can be found at https://github.com/tlaplus/Examples/blob/master/specifications/PaxosHowToWinATuringAward/Paxos.tla.
 
 TODO: It refines the spec in module Voting.                             
 *)
@@ -17,29 +22,17 @@ None == CHOOSE v : v \notin Value
 
 ASSUME  /\ \A Q \in Quorum : Q \subseteq Acceptor
         /\ \A Q1, Q2 \in Quorum : Q1 \cap Q2 # {}
-      
+-----------------------------------------------------------------------------
 Ballot ==  Nat
-(***************************************************************************)
-(* We now define Message to be the set of all possible messages that can   *)
-(* be sent in the algorithm.  In TLA+, the expression                      *)
-(*                                                                         *)
-(* (1) [type |-> "1a", bal |-> b]                                          *)
-(*                                                                         *)
-(* is a record r with two components, a `type'component, r.type, that      *)
-(* equals "1a" and whose bal component, r.bal, that equals b.  The         *)
-(* expression                                                              *)
-(*                                                                         *)
-(* (2) [type : {"1a"}, bal : Ballot]                                       *)
-(*                                                                         *)
-(* is the set of all records r with a components `type' and bal such that  *)
-(* r.type is an element of {"1a"} and r.bal is an element of Ballot.       *)
-(* Since "1a" is the only element of {"1a"}, formula (2) is the set of all *)
-(* elements (1) such that b \in Ballot.                                    *)
-(*                                                                         *)
-(* The function of each type of message in the set Message is explained    *)
-(* below with the action that can send it.                                 *)
-(***************************************************************************)
-Message == 
+
+(*
+The set of all possible CAS operations.
+The CAS operations with cmpVal = None are initialization operations.
+We do not allow the new value (swapVal) to be None.
+*)
+CASOperation == [cmpVal : Value \cup {None}, swapVal : Value]
+
+Message == \* the set of all possible messages that can be sent in the algorithm
        [type : {"1a"}, bal : Ballot]
   \cup [type : {"1b"}, acc : Acceptor, bal : Ballot, 
         mbal : Ballot \cup {-1}, mval : Value \cup {None}]
@@ -60,39 +53,41 @@ VARIABLES
     maxVBal, \*
     maxVVal, \*
     msgs,    \* the set of all messages that have been sent
-    cas      \* cas[b \in Ballot]: [cmpVal : Value \cup {None}, swapVal : Value \cup {None}>>  \* TODO
+    ops      \* ops[b \in Ballot]: the CAS operation to be proposed at ballot b
 
-vars == <<maxBal, maxVBal, maxVVal, msgs, cas>>
+vars == <<maxBal, maxVBal, maxVVal, msgs, ops>>
 ----------------------------------------------------------------------------
 TypeOK == /\ maxBal  \in [Acceptor -> Ballot \cup {-1}]
           /\ maxVBal \in [Acceptor -> Ballot \cup {-1}]
           /\ maxVVal \in [Acceptor -> Value \cup {None}]
           /\ msgs \subseteq Message
-          /\ cas \in [Ballot -> [cmpVal : Value \cup {None},
-                                swapVal : Value \cup {None}]]
+          /\ ops \in [Ballot -> CASOperation]
 ----------------------------------------------------------------------------
 Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxVBal = [a \in Acceptor |-> -1]
         /\ maxVVal = [a \in Acceptor |-> None]
         /\ msgs = {}
-        /\ cas = [b \in Ballot |-> [cmpVal |-> None, swapVal |-> None]]   \* TODO:
+        \* ops remains unchanged; we utilize TLC to explore all possible CAS operations.
+        /\ ops \in [Ballot -> CASOperation]
 ----------------------------------------------------------------------------
 Send(m) == msgs' = msgs \cup {m}
 ----------------------------------------------------------------------------
 (*
-The leader of ballot b \in Ballot issues an CAS(cmpVal, swapVal) operation
-by sending a Phase1a message.
+TODO: define the CAS(cmpVal, swapVal) interface
 *)
-Phase1a(b, cmpVal, swapVal) == 
+
+(*
+The leader of ballot b \in Ballot sends a Phase1a message.
+*)
+Phase1a(b) == 
     /\ Send([type |-> "1a", bal |-> b])
-    /\ cas' = [cas EXCEPT ![b] = [cmpVal |-> cmpVal, swapVal |-> swapVal]]
-    /\ UNCHANGED <<maxBal, maxVBal, maxVVal>>
+    /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
 (*
 The acceptor a \in Acceptor receives a Phase1a message
 and sends back a Phase1b message.
 
-TODO: This action implements the IncreaseMaxBal(a,b) action of the Voting algorithm
-for b = m.bal.
+For refinement:
+This action implements the IncreaseMaxBal(a,b) action of the Voting algorithm for b = m.bal.
 *)
 Phase1b(a) == 
   /\ \E m \in msgs : 
@@ -101,51 +96,16 @@ Phase1b(a) ==
         /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
         /\ Send([type |-> "1b", acc |-> a, bal |-> m.bal, 
                  mbal |-> maxVBal[a], mval |-> maxVVal[a]])
-  /\ UNCHANGED <<maxVBal, maxVVal, cas>>
-(***************************************************************************)
-(* In the Phase2a(b, v) action, the ballot b leader sends a type "2a"      *)
-(* message asking the acceptors to vote for v in ballot number b.  The     *)
-(* enabling conditions of the action--its first two conjuncts--ensure that *)
-(* three of the four enabling conditions of action VoteFor(a, b, v) in     *)
-(* module Voting will be true when acceptor a receives that message.       *)
-(* Those three enabling conditions are the second through fourth conjuncts *)
-(* of that action.                                                         *)
-(*                                                                         *)
-(* The first conjunct of Phase2a(b, v) asserts that at most one phase 2a   *)
-(* message is ever sent for ballot b.  Since an acceptor will vote for a   *)
-(* value in ballot b only when it receives the appropriate phase 2a        *)
-(* message, the phase 2a message sent by this action this ensures that     *)
-(* these two enabling conjuncts of VoteFor(a,b,v) will be true forever:    *)
-(*                                                                         *)
-(*     /\ \A vt \in votes[a] : vt[1] /= b                                  *)
-(*     /\ \A c \in Acceptor \ {a} :                                        *)
-(*          \A vt \in votes[c] : (vt[1] = b) => (vt[2] = v)                *)
-(*                                                                         *)
-(* The second conjunct of the Phase2a(b, v) action is the heart of the     *)
-(* Paxos consensus algorithm.  It's a bit complicated, but I've tried a    *)
-(* number of times to write it in English, and it's much easier to         *)
-(* understand when written in mathematics.  The LET/IN construct locally   *)
-(* defines Q1 to be the set of phase 1b messages sent in ballot number b   *)
-(* by acceptors in quorum Q; and it defines Q1bv to be the subset of those *)
-(* messages indicating that the sender had voted in some ballot (which     *)
-(* must have been numbered less than b).  You should study the IN clause   *)
-(* to convince yourself that it equals ShowsSafeAt(Q, b, v), defined in    *)
-(* module Voting, using the values of maxBal[a], maxVBal[a], and maxVVal[a] *)
-(* `a' sent in its phase 1b message to describe what votes it had cast     *)
-(* when it sent that message.  Moreover, since `a' will no longer cast any *)
-(* votes in ballots numbered less than b, the IN clause implies that       *)
-(* ShowsSafeAt(Q, b, v) is still true and will remain true forever.        *)
-(* Hence, this conjunct of Phase2a(b, v) checks the enabling condition     *)
-(*                                                                         *)
-(*    /\ \E Q \in Quorum : ShowsSafeAt(Q, b, v)                            *)
-(*                                                                         *)
-(* of module Voting's VoteFor(a, b, v) action.                             *)
-(*                                                                         *)
-(* The type "2a" message sent by this action therefore tells every         *)
-(* acceptor `a' that, when it receives the message, all the enabling       *)
-(* conditions of VoteFor(a, b, v) but the first, maxBal[a] =< b, are       *)
-(* satisfied.                                                              *)
-(***************************************************************************)
+  /\ UNCHANGED <<maxVBal, maxVVal, ops>>
+(*
+In the Phase2a(b, v) action, the ballot b leader sends a type "2a" message
+asking the acceptors to vote for some value computed based on v in ballot number b.
+
+For refinement:
+the enabling conditions of the action--its first two conjuncts--ensure that
+the second through fourth conjuncts of the four enabling conditions of action VoteFor(a, b, v) in
+module Voting will be true when acceptor a receives that message.      
+*)
 Phase2a(b, v) ==
   /\ ~ \E m \in msgs : m.type = "2a" /\ m.bal = b
   /\ \E Q \in Quorum :
@@ -154,24 +114,25 @@ Phase2a(b, v) ==
                                  /\ m.bal = b}
             Q1bv == {m \in Q1b : m.mbal >= 0}
         IN  /\ \A a \in Q : \E m \in Q1b : m.acc = a 
-            /\ \/ Q1bv = {}
-               \/ \E m \in Q1bv : 
+            /\ \/ /\ Q1bv = {}  \* CAS(None, v) as an initialization operation
+                  /\ ops[b].cmpVal = None  \* added for CASPaxos
+               \/ \E m \in Q1bv :  \* CAS(v, ops[b].swapVal) as an atomic compare-and-swap operation
                     /\ m.mval = v
                     /\ \A mm \in Q1bv : m.mbal >= mm.mbal 
-  /\ Send([type |-> "2a", bal |-> b, val |-> v])
-  /\ UNCHANGED <<maxBal, maxVBal, maxVVal>>
-(***************************************************************************)
-(* The Phase2b(a) action describes what acceptor `a' does when it receives *)
-(* a phase 2a message m, which is sent by the leader of ballot m.bal       *)
-(* asking acceptors to vote for m.val in that ballot.  Acceptor `a' acts   *)
-(* on that request, voting for m.val in ballot number m.bal, iff m.bal >=  *)
-(* maxBal[a], which means that `a' has not participated in any ballot      *)
-(* numbered greater than m.bal.  Thus, this enabling condition of the      *)
-(* Phase2b(a) action together with the receipt of the phase 2a message m   *)
-(* implies that the VoteFor(a, m.bal, m.val) action of module Voting is    *)
-(* enabled and can be executed.  The Phase2b(a) message updates maxBal[a], *)
-(* maxVBal[a], and maxVVal[a] so their values mean what they were claimed   *)
-(* to mean in the comments preceding the variable declarations.            *)
+                    /\ ops[b].cmpVal = v  \* added for CASPaxos
+  /\ Send([type |-> "2a", bal |-> b, val |-> ops[b].swapVal])  \* modified for CASPaxos: val |-> ops[b].swapVal
+  /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
+(*
+The Phase2b(a) action describes what a \in Acceptor does
+when it receives a phase 2a message m \in msgs,
+which is sent by the leader of ballot m.bal       
+asking acceptors to vote for m.val in that ballot.
+
+For refinement:
+The enabling condition of the Phase2b(a) action
+together with the receipt of the phase 2a message m   
+implies that the VoteFor(a, m.bal, m.val) action of module Voting is enabled and can be executed.
+*)
 (***************************************************************************)  
 Phase2b(a) == 
   \E m \in msgs : 
@@ -180,61 +141,20 @@ Phase2b(a) ==
       /\ maxBal' = [maxBal EXCEPT ![a] = m.bal] 
       /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal] 
       /\ maxVVal' = [maxVVal EXCEPT ![a] = m.val]
-      /\ Send([type |-> "2b", acc |-> a,
-              bal |-> m.bal, val |-> m.val]) 
+      /\ Send([type |-> "2b", acc |-> a, bal |-> m.bal, val |-> m.val]) 
+      /\ UNCHANGED <<ops>>
+(*
+The leader of ballot b \in Ballot responds to the user.
 
-(***************************************************************************)
-(* The definitions of Next and Spec are what we expect them to be.         *)
-(***************************************************************************)
+TODO: to finish it
+*)
+Respond(b) == FALSE
+----------------------------------------------------------------------------
 Next == \/ \E b \in Ballot : \/ Phase1a(b)
                              \/ \E v \in Value : Phase2a(b, v)
+                             \/ Respond(b)
         \/ \E a \in Acceptor : Phase1b(a) \/ Phase2b(a)
 
 Spec == Init /\ [][Next]_vars
 ----------------------------------------------------------------------------
-(***************************************************************************)
-(* This current module is distributed with two models, TinyModel and       *)
-(* SmallModel.  SmallModel is the same as the model by that name for the   *)
-(* Voting specification.  TinyModel is the same except it defines Ballot   *)
-(* to contain only two elements.  Run TLC on these models.  You should     *)
-(* find that it takes a couple of seconds to run TinyModel and two or      *)
-(* three minutes to run SmallModel.                                        *)
-(*                                                                         *)
-(* Next, try the same thing you did with the Voting algorithm: Modify the  *)
-(* models so the assumption that any pair of quorums has an element in     *)
-(* common is no longer true.  (Again, it's best to modify clones of the    *)
-(* models.) This time, running TLC will not find an error.  The            *)
-(* correctness of theorems Invariance and Implementation does not depend   *)
-(* on that assumption.  The Paxos consensus algorithm still correctly      *)
-(* implements the Voting algorithm; but the Voting algorithm is incorrect  *)
-(* if the assumption does not hold.                                        *)
-(*                                                                         *)
-(* Now go back to the original SmallModel, in which the quorum assumption  *)
-(* holds.  The sets Acceptor and Value are symmetry sets for the spec.     *)
-(* (See the "Model Values and Symmetry" help page to find out what that    *)
-(* means.) Try editing the values substituted for Acceptor and/or Value by *)
-(* selecting the "Symmetry set" option and comparing the number of         *)
-(* reachable states TLC found and the time it took.  (Remember to use      *)
-(* cloned models.)                                                         *)
-(*                                                                         *)
-(* When you have other things to do while TLC is running, try increasing   *)
-(* the size of the model a very little bit at a time and see how the       *)
-(* running time increases.  You'll find that it increases exponentially    *)
-(* with the numbers of acceptors, values, and ballots.                     *)
-(*                                                                         *)
-(* Fortunately, exhaustively checking a small model is very effective at   *)
-(* finding errors.  Since the Paxos consensus algorithm has been proved    *)
-(* correct, and that proof has been read by many people, I'm sure that the *)
-(* basic algorithm is correct.  Checking this spec on SmallModel makes me  *)
-(* quite confident that there are no "coding errors" in this TLA+          *)
-(* specification of the algorithm.                                         *)
-(*                                                                         *)
-(* For checking safety properties, TLC can obtain close to linear speedup  *)
-(* using dozens of processors.  After designing a new distributed          *)
-(* algorithm, you will have plenty of time to run TLC while the algorithm  *)
-(* is being implemented and the implementation tested.  Use that time to   *)
-(* run it for as long as you can on the largest machine(s) that you can.   *)
-(* Testing the implementation is unlikely to find subtle errors in the     *)
-(* algorithm.                                                              *)
-(***************************************************************************)
 ============================================================================
