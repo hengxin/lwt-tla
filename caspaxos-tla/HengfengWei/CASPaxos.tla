@@ -10,7 +10,6 @@ which can be found at https://github.com/tlaplus/Examples/blob/master/specificat
 
 TODO: It refines the spec in module Voting.                             
 *)
------------------------------------------------------------------------------
 EXTENDS Integers
 -----------------------------------------------------------------------------
 CONSTANTS
@@ -26,6 +25,8 @@ ASSUME  /\ \A Q \in Quorum : Q \subseteq Acceptor
 Ballot ==  Nat
 
 (*
+Added for CASPaxos.
+
 The set of all possible CAS operations.
 The CAS operations with cmpVal = None are initialization operations.
 We do not allow the new value (swapVal) to be None.
@@ -54,6 +55,7 @@ VARIABLES
     maxVVal, \*
     msgs,    \* the set of all messages that have been sent
     ops      \* ops[b \in Ballot]: the CAS operation to be proposed at ballot b
+             \* added for CASPaxos
 
 vars == <<maxBal, maxVBal, maxVVal, msgs, ops>>
 ----------------------------------------------------------------------------
@@ -133,16 +135,15 @@ The enabling condition of the Phase2b(a) action
 together with the receipt of the phase 2a message m   
 implies that the VoteFor(a, m.bal, m.val) action of module Voting is enabled and can be executed.
 *)
-(***************************************************************************)  
 Phase2b(a) == 
-  \E m \in msgs : 
-      /\ m.type = "2a"
-      /\ m.bal >= maxBal[a]
-      /\ maxBal' = [maxBal EXCEPT ![a] = m.bal] 
-      /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal] 
-      /\ maxVVal' = [maxVVal EXCEPT ![a] = m.val]
-      /\ Send([type |-> "2b", acc |-> a, bal |-> m.bal, val |-> m.val]) 
-      /\ UNCHANGED <<ops>>
+  /\ \E m \in msgs : 
+        /\ m.type = "2a"
+        /\ m.bal >= maxBal[a]
+        /\ maxBal' = [maxBal EXCEPT ![a] = m.bal] 
+        /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal] 
+        /\ maxVVal' = [maxVVal EXCEPT ![a] = m.val]
+        /\ Send([type |-> "2b", acc |-> a, bal |-> m.bal, val |-> m.val]) 
+  /\ UNCHANGED <<ops>>
 (*
 The leader of ballot b \in Ballot responds to the user.
 
@@ -153,8 +154,8 @@ Respond(b) == FALSE
 Next == \/ \E b \in Ballot : \/ Phase1a(b)
                              \/ \E v \in Value : Phase2a(b, v)
                              \/ Respond(b)
-        \/ \E a \in Acceptor : Phase1b(a) \/ Phase2b(a)
+        \/ \E a \in Acceptor : \/ Phase1b(a)
+                               \/ Phase2b(a)
 
 Spec == Init /\ [][Next]_vars
-----------------------------------------------------------------------------
 ============================================================================

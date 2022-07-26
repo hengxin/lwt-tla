@@ -20,10 +20,5 @@
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/CASPaxos.tla</locationURI>
 		</link>
-		<link>
-			<name>Paxos.tla</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Paxos.tla</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>
