@@ -146,11 +146,17 @@ Respond(b) ==
   /\ Send([type |-> "response", bal |-> b])
   /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
 ----------------------------------------------------------------------------
-Next == \/ \E b \in Ballot : \/ Phase1a(b)
-                             \/ \E v \in Value : Phase2a(b, v)
-                             \/ Respond(b) \* <<+>>
-        \/ \E a \in Acceptor : \/ Phase1b(a)
-                               \/ Phase2b(a)
+Next ==
+  \/ \E b \in Ballot :
+       \/ Phase1a(b)
+       \/ \E v \in Value : Phase2a(b, v)
+       \/ Respond(b) \* <<+>>
+ \/ \E a \in Acceptor :
+      \/ Phase1b(a)
+      \/ Phase2b(a)
 
 Spec == Init /\ [][Next]_vars
 ============================================================================
+\* Modification History
+\* Last modified Wed Jul 27 00:15:28 CST 2022 by hengxin
+\* Created Tue Jul 20 23:30:00 CST 2022 by hengxin

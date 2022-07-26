@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CASPaxos</name>
+	<name>CASPaxosH</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -15,11 +15,6 @@
 		<nature>toolbox.natures.TLANature</nature>
 	</natures>
 	<linkedResources>
-		<link>
-			<name>CASPaxos.tla</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/CASPaxos.tla</locationURI>
-		</link>
 		<link>
 			<name>CASPaxosH.tla</name>
 			<type>1</type>
