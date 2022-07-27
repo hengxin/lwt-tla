@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CASPaxos</name>
+	<name>ScyllaPaxos</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,19 +16,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>CASConsensus.tla</name>
+			<name>ScyllaPaxos.tla</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/CASConsensus.tla</locationURI>
-		</link>
-		<link>
-			<name>CASPaxos.tla</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/CASPaxos.tla</locationURI>
-		</link>
-		<link>
-			<name>CASPaxosH.tla</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/CASPaxosH.tla</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/ScyllaPaxos.tla</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

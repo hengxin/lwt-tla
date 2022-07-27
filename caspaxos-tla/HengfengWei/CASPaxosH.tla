@@ -5,7 +5,7 @@ CASPaxos spec with the "history" variable.
 
 EXTENDS CASPaxos, Sequences
 ----------------------------------------------------------------------------
-Event == [type : {"invoke", "response"}, bal : Ballot]
+Event == [type : {"invocation", "response"}, bal : Ballot]
 ----------------------------------------------------------------------------
 VARIABLES history
 
@@ -21,7 +21,8 @@ InitH ==
 ----------------------------------------------------------------------------
 Phase1aH(b) ==
   /\ Phase1a(b)
-  /\ history' = Append(history, [type |-> "invoke", bal |-> b])
+  \* Every CAS operation has an "invocation" event.
+  /\ history' = Append(history, [type |-> "invocation", bal |-> b])
 
 Phase1bH(a) ==
   /\ Phase1b(a)
@@ -37,6 +38,7 @@ Phase2bH(a) ==
 
 RespondH(b) ==
   /\ Respond(b)
+  \* Not all CAS operations have a "response" event. Some do not terminate.
   /\ history' = Append(history, [type |-> "response", bal |-> b])
 ----------------------------------------------------------------------------
 NextH ==
@@ -51,5 +53,5 @@ NextH ==
 SpecH == InitH /\ [][NextH]_varsH
 =============================================================================
 \* Modification History
-\* Last modified Wed Jul 27 00:15:30 CST 2022 by hengxin
+\* Last modified Wed Jul 27 09:23:18 CST 2022 by hengxin
 \* Created Tue Jul 26 23:30:04 CST 2022 by hengxin

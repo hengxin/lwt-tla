@@ -3,6 +3,10 @@
 This is a high-level specification of the CASPaxos algorithm
 from the paper "CASPaxos: Replicated State Machines without Logs" by Denis Rystsov.
 
+The CASPaxos algorithm implements a linearizable CAS register.
+Note that since linearizability is a local property,
+it is sufficient to model a single CAS register in a system.
+
 Please go to https://arxiv.org/abs/1802.07000 for the paper.
 
 This spec is adapted from that of Paxos consensus algorithm by Leslie Lamport,
@@ -110,7 +114,7 @@ Phase2a(b, v) ==
                \/ \E m \in Q1bv :  \* <<+>> CAS(v, ops[b].swapVal) as an atomic compare-and-swap operation
                     /\ m.mval = v
                     /\ \A mm \in Q1bv : m.mbal >= mm.mbal 
-                    /\ ops[b].cmpVal = v  \* <<+>>
+                    /\ ops[b].cmpVal = v  \* <<+>> not all CAS operations will terminate due to this precondition
   /\ Send([type |-> "2a", bal |-> b, val |-> ops[b].swapVal])  \* <<+>> val |-> ops[b].swapVal
   /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
 (*
@@ -158,5 +162,5 @@ Next ==
 Spec == Init /\ [][Next]_vars
 ============================================================================
 \* Modification History
-\* Last modified Wed Jul 27 00:15:28 CST 2022 by hengxin
+\* Last modified Wed Jul 27 09:47:34 CST 2022 by hengxin
 \* Created Tue Jul 20 23:30:00 CST 2022 by hengxin

@@ -950,7 +950,7 @@
  Sequences}%
 \@x{\makebox[0pt][r]{\scriptsize 7\hspace{1em}}}\midbar\@xx{}%
  \@x{\makebox[0pt][r]{\scriptsize 8\hspace{1em}} Event \.{\defeq} [ type \.{:}
- \{\@w{invoke} ,\,\@w{response} \} ,\, bal \.{:} Ballot ]}%
+ \{\@w{invocation} ,\,\@w{response} \} ,\, bal \.{:} Ballot ]}%
 \@x{\makebox[0pt][r]{\scriptsize 9\hspace{1em}}}\midbar\@xx{}%
 \@x{\makebox[0pt][r]{\scriptsize 10\hspace{1em}} {\VARIABLES} history}%
 \@pvspace{8.0pt}%
@@ -970,55 +970,66 @@
 \@x{\makebox[0pt][r]{\scriptsize 22\hspace{1em}} Phase1aH ( b ) \.{\defeq}}%
  \@x{\makebox[0pt][r]{\scriptsize 23\hspace{1em}}\@s{8.2} \.{\land} Phase1a (
  b )}%
- \@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}}\@s{8.2} \.{\land} history
- \.{'} \.{=} Append ( history ,\, [ type \.{\mapsto}\@w{invoke} ,\, bal
+\@x{\makebox[0pt][r]{\scriptsize 24\hspace{1em}}\@s{8.2}}%
+\@y{\@s{0}%
+ Every \ensuremath{CAS} operation has an \ensuremath{\@w{invocation}} event.
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 25\hspace{1em}}\@s{8.2} \.{\land} history
+ \.{'} \.{=} Append ( history ,\, [ type \.{\mapsto}\@w{invocation} ,\, bal
  \.{\mapsto} b ] )}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 26\hspace{1em}} Phase1bH ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 27\hspace{1em}}\@s{8.2} \.{\land} Phase1b (
+\@x{\makebox[0pt][r]{\scriptsize 27\hspace{1em}} Phase1bH ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 28\hspace{1em}}\@s{8.2} \.{\land} Phase1b (
  a )}%
- \@x{\makebox[0pt][r]{\scriptsize 28\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 29\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} history {\rangle}}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 30\hspace{1em}} Phase2aH ( b ,\, v )
+ \@x{\makebox[0pt][r]{\scriptsize 31\hspace{1em}} Phase2aH ( b ,\, v )
  \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 31\hspace{1em}}\@s{8.2} \.{\land} Phase2a (
+ \@x{\makebox[0pt][r]{\scriptsize 32\hspace{1em}}\@s{8.2} \.{\land} Phase2a (
  b ,\, v )}%
- \@x{\makebox[0pt][r]{\scriptsize 32\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 33\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} history {\rangle}}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 34\hspace{1em}} Phase2bH ( a ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 35\hspace{1em}}\@s{8.2} \.{\land} Phase2b (
+\@x{\makebox[0pt][r]{\scriptsize 35\hspace{1em}} Phase2bH ( a ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 36\hspace{1em}}\@s{8.2} \.{\land} Phase2b (
  a )}%
- \@x{\makebox[0pt][r]{\scriptsize 36\hspace{1em}}\@s{8.2} \.{\land}
+ \@x{\makebox[0pt][r]{\scriptsize 37\hspace{1em}}\@s{8.2} \.{\land}
  {\UNCHANGED} {\langle} history {\rangle}}%
 \@pvspace{8.0pt}%
-\@x{\makebox[0pt][r]{\scriptsize 38\hspace{1em}} RespondH ( b ) \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 39\hspace{1em}}\@s{8.2} \.{\land} Respond (
+\@x{\makebox[0pt][r]{\scriptsize 39\hspace{1em}} RespondH ( b ) \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 40\hspace{1em}}\@s{8.2} \.{\land} Respond (
  b )}%
- \@x{\makebox[0pt][r]{\scriptsize 40\hspace{1em}}\@s{8.2} \.{\land} history
+\@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}}\@s{8.2}}%
+\@y{\@s{0}%
+ Not all \ensuremath{CAS} operations have a \ensuremath{\@w{response}} event.
+ Some do not terminate.
+}%
+\@xx{}%
+ \@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}}\@s{8.2} \.{\land} history
  \.{'} \.{=} Append ( history ,\, [ type \.{\mapsto}\@w{response} ,\, bal
  \.{\mapsto} b ] )}%
-\@x{\makebox[0pt][r]{\scriptsize 41\hspace{1em}}}\midbar\@xx{}%
-\@x{\makebox[0pt][r]{\scriptsize 42\hspace{1em}} NextH \.{\defeq}}%
- \@x{\makebox[0pt][r]{\scriptsize 43\hspace{1em}}\@s{8.2} \.{\lor} \E\, b
+\@x{\makebox[0pt][r]{\scriptsize 43\hspace{1em}}}\midbar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}} NextH \.{\defeq}}%
+ \@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}}\@s{8.2} \.{\lor} \E\, b
  \.{\in} Ballot \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 44\hspace{1em}}\@s{27.51} \.{\lor} Phase1aH
+ \@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}}\@s{27.51} \.{\lor} Phase1aH
  ( b )}%
- \@x{\makebox[0pt][r]{\scriptsize 45\hspace{1em}}\@s{27.51} \.{\lor} \E\, v
+ \@x{\makebox[0pt][r]{\scriptsize 47\hspace{1em}}\@s{27.51} \.{\lor} \E\, v
  \.{\in} Value \.{:} Phase2aH ( b ,\, v )}%
- \@x{\makebox[0pt][r]{\scriptsize 46\hspace{1em}}\@s{27.51} \.{\lor} RespondH
+ \@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}}\@s{27.51} \.{\lor} RespondH
  ( b )}%
- \@x{\makebox[0pt][r]{\scriptsize 47\hspace{1em}}\@s{8.2} \.{\lor} \E\, a
+ \@x{\makebox[0pt][r]{\scriptsize 49\hspace{1em}}\@s{8.2} \.{\lor} \E\, a
  \.{\in} Acceptor \.{:}}%
- \@x{\makebox[0pt][r]{\scriptsize 48\hspace{1em}}\@s{27.51} \.{\lor} Phase1bH
+ \@x{\makebox[0pt][r]{\scriptsize 50\hspace{1em}}\@s{27.51} \.{\lor} Phase1bH
  ( a )}%
- \@x{\makebox[0pt][r]{\scriptsize 49\hspace{1em}}\@s{27.51} \.{\lor} Phase2bH
+ \@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}}\@s{27.51} \.{\lor} Phase2bH
  ( a )}%
 \@pvspace{8.0pt}%
- \@x{\makebox[0pt][r]{\scriptsize 51\hspace{1em}} SpecH \.{\defeq} InitH
+ \@x{\makebox[0pt][r]{\scriptsize 53\hspace{1em}} SpecH \.{\defeq} InitH
  \.{\land} {\Box} [ NextH ]_{ varsH}}%
-\@x{\makebox[0pt][r]{\scriptsize 52\hspace{1em}}}\bottombar\@xx{}%
+\@x{\makebox[0pt][r]{\scriptsize 54\hspace{1em}}}\bottombar\@xx{}%
 \setboolean{shading}{false}
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1026,7 +1037,7 @@
 \end{cpar}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
  \ensuremath{\.{\,\backslash\,}}* Last modified \ensuremath{Wed}
- \ensuremath{Jul} 27 00:15:30 \ensuremath{CST} 2022 by \ensuremath{hengxin
+ \ensuremath{Jul} 27 09:23:18 \ensuremath{CST} 2022 by \ensuremath{hengxin
 }%
 \end{cpar}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
