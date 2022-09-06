@@ -94,6 +94,7 @@ Send(m) == msgs' = msgs \cup {m}
 The leader of ballot b \in Ballot sends a "Prepare" message.
 *)
 Phase1a(b) ==
+    /\ ~ \E m \in msgs: m.type = "1a" /\ m.bal = b
     /\ Send([type |-> "1a", bal |-> b])
     /\ UNCHANGED <<maxBal, maxAccBal, maxAccVal, maxComBal, maxComVal, dataResult, ops>>        
 (*
@@ -200,7 +201,7 @@ Next ==
 Spec == Init /\ [][Next]_vars
 =============================================================================
 \* Modification History
-\* Last modified Fri Sep 02 13:40:07 CST 2022 by 875
+\* Last modified Tue Sep 06 14:17:55 CST 2022 by 875
 \* Last modified Sat Aug 20 13:41:52 CST 2022 by hengxin
 \* Last modified Thu Mar 03 17:37:19 CST 2022 by LENOVO
 \* Created Thu Dec 08 10:19:29 CST 2021 by LENOVO
