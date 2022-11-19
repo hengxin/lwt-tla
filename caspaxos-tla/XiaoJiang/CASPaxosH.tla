@@ -1,9 +1,9 @@
--------------------------- MODULE CassandraPaxosH --------------------------
+----------------------------- MODULE CASPaxosH -----------------------------
 (*
-CassandraPaxos spec with the "history" variable.
+CASPaxos spec with the "history" variable.
 *)
 
-EXTENDS CassandraPaxos, Sequences, FiniteSets, TLC
+EXTENDS CASPaxos, Sequences, FiniteSets, TLC
 ----------------------------------------------------------------------------
 Event == [type : {"invocation", "response"}, bal : Ballot]
 ----------------------------------------------------------------------------
@@ -29,20 +29,12 @@ Phase1bH(a) ==
   /\ Phase1b(a)
   /\ UNCHANGED <<history>>
 
-Phase2aH(b) ==
-  /\ Phase2a(b)
+Phase2aH(b, v) ==
+  /\ Phase2a(b, v)
   /\ UNCHANGED <<history>>
 
 Phase2bH(a) ==
   /\ Phase2b(a)
-  /\ UNCHANGED <<history>>
-
-Phase3aH(b, v) ==
-  /\ Phase3a(b, v)
-  /\ UNCHANGED <<history>>
-
-Phase3bH(a) ==
-  /\ Phase3b(a)
   /\ UNCHANGED <<history>>
 
 RespondH(b) ==
@@ -53,13 +45,11 @@ RespondH(b) ==
 NextH ==
   \/ \E b \in Ballot :
        \/ Phase1aH(b)
-       \/ Phase2aH(b)
-       \/ \E v \in Value : Phase3aH(b, v)
+       \/ \E v \in Value : Phase2aH(b, v)
        \/ RespondH(b)
   \/ \E a \in Acceptor :
        \/ Phase1bH(a)
        \/ Phase2bH(a)
-       \/ Phase3bH(a)
 
 SpecH == InitH /\ [][NextH]_varsH /\ WF_varsH(NextH)
 ----------------------------------------------------------------------------
@@ -72,8 +62,7 @@ CompleteHistory(H) == IF H = <<>> THEN <<>>
                                   ELSE LET cur == Head(H)
                                        IN  IF cur.type = "response" THEN <<cur>> \o CompleteHistory(Tail(H))
                                                                     ELSE IF HasResponse(cur, Tail(H)) THEN <<cur>> \o CompleteHistory(Tail(H))
-                                                                                                      ELSE CompleteHistory(Tail(H))
-                           
+                                                                                                     ELSE CompleteHistory(Tail(H))
 RECURSIVE CHistorySet2CHistory(_, _)
 CHistorySet2CHistory(CHistorySet, value) ==
   IF CHistorySet = {} THEN <<>>
@@ -111,8 +100,8 @@ Prop == <>[](HistoryIsLinearizable(SeqAsSet(CompleteHistory(history))))
 \*    
 \*Inv == HistoryIsLinearizable(CompleteHistory(history))
 \*Prop == <>[](HistoryIsLinearizable(CompleteHistory(history)))
-
 =============================================================================
 \* Modification History
-\* Last modified Sat Nov 19 13:03:31 CST 2022 by 875
-\* Created Sun Sep 18 16:42:01 CST 2022 by 875
+\* Last modified Sat Nov 19 13:00:48 CST 2022 by 875
+\* Last modified Wed Jul 27 09:23:18 CST 2022 by hengxin
+\* Created Tue Jul 26 23:30:04 CST 2022 by hengxin
