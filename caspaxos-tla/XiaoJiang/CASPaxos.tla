@@ -22,7 +22,8 @@ CONSTANTS
     Value,      \* the set of values to be proposed and chosen from
     Acceptor,   \* the set acceptors
     Quorum,     \* the quorum system on acceptors
-    Ballot
+    Ballot,
+    mBallot
 
 None == CHOOSE v : v \notin Value 
 
@@ -53,7 +54,7 @@ VARIABLES
     \* It equals <<-1, None>> if a \in Acceptor has not cast any vote.
     maxVBal, maxVVal, 
     msgs,    \* the set of all messages that have been sent
-    ops      \* <<+>> ops[b]: the CAS operation to be proposed at ballot b \in Ballot
+     ops      \* <<+>> ops[b]: the CAS operation to be proposed at ballot b \in Ballot
 
 vars == <<maxBal, maxVBal, maxVVal, msgs, ops>>
 ----------------------------------------------------------------------------
@@ -68,7 +69,7 @@ Init == /\ maxBal  = [a \in Acceptor |-> -1]
         /\ maxVVal = [a \in Acceptor |-> None]
         /\ msgs = {}
         \* <<+>> ops remains unchanged; we utilize TLC to explore all possible CAS operations.
-        /\ ops \in [Ballot -> CASOperation]
+         /\ ops \in [Ballot -> CASOperation]
 ----------------------------------------------------------------------------
 Send(m) == msgs' = msgs \cup {m}
 ----------------------------------------------------------------------------
@@ -156,6 +157,7 @@ Respond(b) ==
         IN  \A a \in Q : \E m \in Q2b : m.acc = a 
   /\ Send([type |-> "response", bal |-> b])
   /\ UNCHANGED <<maxBal, maxVBal, maxVVal, ops>>
+
 ----------------------------------------------------------------------------
 Next ==
   \/ \E b \in Ballot :
@@ -169,6 +171,6 @@ Next ==
 Spec == Init /\ [][Next]_vars
 ============================================================================
 \* Modification History
-\* Last modified Tue Aug 30 16:22:41 CST 2022 by 875
+\* Last modified Thu Dec 01 14:21:40 CST 2022 by 875
 \* Last modified Wed Jul 27 09:47:34 CST 2022 by hengxin
 \* Created Tue Jul 20 23:30:00 CST 2022 by hengxin
